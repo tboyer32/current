@@ -11,19 +11,20 @@
     <script src="https://d3js.org/d3.v7.min.js"></script>
     <script type="text/javascript">
 
-        function make_d3_obj(clean_data){
-          parsed_data = d3.tsvParseRows(clean_data);
-          console.log(parsed_data);
-        };
+      function make_d3_obj(clean_data){
+        parsed_data = d3.tsvParse(clean_data);
+        console.log(parsed_data);
+      };
 
-        //fetch('/static/test_data.txt')
-        fetch('https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=05340500&startDT=2010-04-20&endDT=2022-04-19&statReportType=daily&statTypeCd=p05,p10,p20,p25,p50,p75,p80,p90,p95&parameterCd=00060')
-          .then(response => response.text())
-          .then(responseData => {
-            clean_data = responseData.substring(responseData.lastIndexOf("#")+1);
-            make_d3_obj(clean_data);
-          });
-        
+      //fetch('/static/test_data.txt')
+      fetch('https://waterservices.usgs.gov/nwis/stat/?format=rdb&sites=05340500&startDT=2010-04-20&endDT=2022-04-19&statReportType=daily&statTypeCd=p05,p10,p20,p25,p50,p75,p80,p90,p95&parameterCd=00060')
+        .then(response => response.text())
+        .then(responseData => {
+          //look for the last # then remove the stupid space that comes after it so I can access the actual data
+          clean_data = responseData.substring(responseData.lastIndexOf("#")+2);
+          make_d3_obj(clean_data);
+        });
+
     </script>
   </body>
 </html>
