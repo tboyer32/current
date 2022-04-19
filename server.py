@@ -19,6 +19,13 @@ OW_API_KEY = os.environ['OPEN_WEATHER_KEY']
 def homepage():
     """Show homepage."""
     
+    return render_template('homepage.html')
+
+
+@app.route('/river-detail')
+def river_detail():
+    """Show a river detail page."""
+
     #https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05410490&parameterCd=00060,00065,63160,00010
 
     #animas
@@ -27,7 +34,7 @@ def homepage():
     #site = '05410490'
     #Wisconsin
     #site = '05404000'
-    #St. Croix
+    #St. Croix - has temp, cfs, gage height and stream height
     #site = '05340500'
 
     api_params = ['00060','00065','63160','00010']
@@ -42,7 +49,7 @@ def homepage():
     river_data = response.json()
     
 
-    #I feel like there should be an easier/more elegant way to do this.
+    #TODO I feel like there should be an easier/more elegant way to do this.
     river = {}
 
     timeSeries = river_data['value']['timeSeries']
@@ -60,7 +67,7 @@ def homepage():
             river['temp'] = param['values'][0]['value'][0]['value']
 
 
-    return render_template('homepage.html', river=river)
+    return render_template('river-detail.html', river=river)
 
 
 if __name__ == '__main__':
