@@ -3,3 +3,4 @@ __pycache__
 secrets.sh
 *.pyc
 .DS_Store
+sample_river.json
