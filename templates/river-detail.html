@@ -4,4 +4,10 @@
 {% block body %}
 <h1>A river</h1>
     {{ river }}
+    <p id="historical-values"></p>
+{% endblock %}
+
+{% block after_body %}
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script src="/static/js/parse-river-data.js"></script>
 {% endblock %}
