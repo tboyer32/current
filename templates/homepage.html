@@ -1,7 +1,107 @@
 {% extends 'base.html' %}
+
+{% block scripts %}
+<style>
+    #map {
+        width: 500px;
+        height: 500px;
+    }
+</style>
+<link href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css" rel="stylesheet">
+<script src="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js"></script>
+<script>
+
+</script>
+{% endblock %}
+
 {% block title %}Welcome to Current{% endblock %}
+
 
 {% block body %}
 <h1>Welcome</h1>
 <p><a href="/river-detail">View a river</a></p>
+<div id="map"></div>
+{% endblock %}
+
+
+{% block after_body %}
+<script>
+    //
+    // Display the mapbox
+    //
+    mapboxgl.accessToken = '{{ mb_key }}';
+    let map = new mapboxgl.Map({
+        container: 'map', // container id
+        style: 'mapbox://styles/mapbox/outdoors-v11', // style URL
+        center: [-74.5, 40], // starting position [lng, lat]
+        zoom: 7 // starting zoom
+    });
+
+
+    //
+    // geolocation
+    //
+    let initMap = true; //set this to true for testing until we figure out a button to search after map move
+
+    const geoOptions = {
+        enableHighAccuracy: false,
+        timeout: 5000,
+        maximumAge: Infinity
+    };
+
+    function geoError(err){
+        console.log(err.code);
+        console.log(err.message);
+    }
+
+    function displayCoords(position) {
+        const user_latitude  = position.coords.latitude;
+        const user_longitude = position.coords.longitude;
+        //console.log(`lat: ${user_latitude}, long: ${user_longitude}`);
+
+        //approximately 80 miles lat/long - may need to tweak this
+        let range = .25/2;
+
+        //move the map to the user's location
+        map.flyTo({
+            center: [
+                user_longitude,
+                user_latitude
+            ],
+            essential: true // this animation is considered essential with respect to prefers-reduced-motion
+        });
+        map.on('moveend', () => {
+            const bounds = map.getBounds();
+            if(initMap === true){
+                getRivers(bounds);
+                initMap = false;
+            }
+        })
+    };
+
+    navigator.geolocation.getCurrentPosition(displayCoords, geoError, geoOptions);
+
+    //
+    // Get rivers from Flask
+    //
+    function getRivers(bounds) {
+        fetch('/rivers')
+        .then(response => response.json())
+        .then(responseData => {
+            //displayRivers(responseData);
+            displayRivers(responseData);
+        });
+    };
+    function displayRivers(rivers){
+        for (let river in rivers){
+            console.log(`name: ${river}, latitude: ${rivers[river]['latitude']}, longitude: ${rivers[river]['longitude']}`);
+            
+            new mapboxgl.Marker()
+            .setLngLat([rivers[river]['longitude'], rivers[river]['latitude']])
+            .setPopup(new mapboxgl.Popup({closeButton: false}).setHTML(`${river}`)) // add popup
+            .addTo(map)
+            .togglePopup();
+        }
+    }
+</script>
 {% endblock %}

@@ -1,3 +1,5 @@
+//TODO: build the URL dynamically
+
 let parsed_data = '';
 
 function make_d3_obj(clean_data){
@@ -8,7 +10,7 @@ function make_d3_obj(clean_data){
   const month = d.getMonth()+1;
   
   today_data = parsed_data.find(data => data.month_nu == month && data.day_nu == day);
-  document.querySelector('#historical-values').innerHTML = `Mean Historic Value: ${today_data.p50_va}cfs`;
+  document.querySelector('#historical-values').innerHTML = `Mean Historic Value: <b>${today_data.p50_va} cfs</b>`;
 };
 
 //fetch('/static/test_data.txt')

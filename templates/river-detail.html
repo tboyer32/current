@@ -2,8 +2,11 @@
 {% block title %}Welcome to Current{% endblock %}
 
 {% block body %}
-<h1>A river</h1>
-    {{ river }}
+<h1>{{ river['name'] }}</h1>
+    <p>current flow: <b>{{ river['cfs'] }} cfs</b></p>
+    <p>current gage height: <b>{{ river['gage_height'] }} ft</b></p>
+    <p>current stream level: <b>{{ river['stream_level'] }}</b></p>
+    <p>current temp (C): <b>{{ river['temp'] }}</b></p>
     <p id="historical-values"></p>
 {% endblock %}
 

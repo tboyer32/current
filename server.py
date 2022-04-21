@@ -1,4 +1,4 @@
-from flask import (Flask, render_template, request, flash, session, redirect)
+from flask import (Flask, render_template, request, flash, session, redirect, jsonify)
 
 from pprint import pformat
 import os
@@ -13,13 +13,44 @@ app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = True
 
 
 OW_API_KEY = os.environ['OPEN_WEATHER_KEY']
+MB_API_KEY = os.environ['MAPBOX_KEY']
+
+
+# This is temporary just to test my maps
+LOCATIONS = {
+    'kickapoo' : {
+        'usgs_id' : '05410490',
+        'latitude' : 43.18277778,
+        'longitude' : -90.8583333
+    },
+    'wisconsin' : {
+        'usgs_id' : '05404000',
+        'latitude' : 43.605,
+        'longitude' : -89.7566667
+    },
+    'st croix' : {
+        'usgs_id' : '05340500',
+        'latitude' : 45.4069444,
+        'longitude' : -92.6469444       
+    }
+}
 
 
 @app.route('/')
 def homepage():
     """Show homepage."""
-    
-    return render_template('homepage.html')
+
+    return render_template('homepage.html', mb_key=MB_API_KEY)
+
+
+@app.route('/rivers')
+def river_locations():
+    """return locations of nearby rivers"""
+
+    #this will eventually run a database query against the user's map lat and long bounding box
+
+    return jsonify(LOCATIONS)
+
 
 
 @app.route('/river-detail')
@@ -50,9 +81,12 @@ def river_detail():
     
 
     #TODO I feel like there should be an easier/more elegant way to do this.
-    river = {}
-
     timeSeries = river_data['value']['timeSeries']
+    river_name = timeSeries[0]["sourceInfo"]["siteName"]
+
+    river = {
+        'name': river_name
+    }
 
     for param in timeSeries:
         var_code = param['variable']['variableCode'][0]['value']
