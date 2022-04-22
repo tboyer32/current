@@ -3,10 +3,11 @@
 from model import db, River, Fav, User, connect_to_db
 
 
-def create_river(usgs_id, longitude, latitude):
+def create_river(usgs_id, name, longitude, latitude):
     """Create and return a new movie."""
 
     river = River(usgs_id = usgs_id,
+                  name = name,
                   longitude = longitude,
                   latitude = latitude)
 

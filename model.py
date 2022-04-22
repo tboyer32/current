@@ -1,4 +1,4 @@
-"""Models for Current."""
+"""Models for riverdb."""
 
 from flask_sqlalchemy import SQLAlchemy
 
@@ -13,6 +13,7 @@ class River(db.Model):
     river_id = db.Column(db.Integer,
                          autoincrement=True,
                          primary_key=True)
+    name = db.Column(db.String, nullable=False)
     usgs_id = db.Column(db.String, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
@@ -64,7 +65,7 @@ class Fav(db.Model):
         return f"<Fav fav_id = {self.fav_id} user_id = {self.user_id} river_id = {river_id}>"
 
 
-def connect_to_db(flask_app, db_uri="postgresql:///current", echo=True):
+def connect_to_db(flask_app, db_uri="postgresql:///riverdb", echo=True):
     flask_app.config["SQLALCHEMY_DATABASE_URI"] = db_uri
     flask_app.config["SQLALCHEMY_ECHO"] = echo
     flask_app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = False
