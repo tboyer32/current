@@ -15,7 +15,6 @@ function make_d3_obj(clean_data){
   document.querySelector('#historical-values').innerHTML = `Mean Historic Value: <b>${today_data.p50_va} cfs</b>`;
 };
 
-//fetch('https://waterservices.usgs.gov/nwis/stat/?format=rdb,1.0&sites=09361500&statReportType=daily&statTypeCd=p25,p50,p75&parameterCd=00060')
 fetch(`https://waterservices.usgs.gov/nwis/stat/?format=rdb,1.0&sites=${usgsId}&statReportType=daily&statTypeCd=p25,p50,p75&parameterCd=00060`)
   .then(response => response.text())
   .then(responseData => {
