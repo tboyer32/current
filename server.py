@@ -43,7 +43,7 @@ def homepage():
     return render_template('homepage.html', mb_key=MB_API_KEY)
 
 
-@app.route('/rivers')
+@app.route('/rivers') #TODO rename this route rivers.json
 def river_locations():
     """return locations of nearby rivers"""
 
