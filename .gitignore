@@ -4,3 +4,4 @@ secrets.sh
 *.pyc
 .DS_Store
 sample_river.json
+data
