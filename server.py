@@ -53,20 +53,22 @@ def river_locations():
 
 
 
-@app.route('/river-detail')
-def river_detail():
+@app.route('/river-detail/<usgs_id>')
+def river_detail(usgs_id):
     """Show a river detail page."""
 
     #https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05410490&parameterCd=00060,00065,63160,00010
 
     #animas
-    site = '09361500'
+    #site = '09361500'
     #Kickapoo
     #site = '05410490'
     #Wisconsin
     #site = '05404000'
     #St. Croix - has temp, cfs, gage height and stream height
     #site = '05340500'
+
+    site = usgs_id
 
     api_params = ['00060','00065','63160','00010']
     cfs_code, gage_code, st_level_code, temp_code = api_params
@@ -101,7 +103,7 @@ def river_detail():
             river['temp'] = param['values'][0]['value'][0]['value']
 
 
-    return render_template('river-detail.html', river=river)
+    return render_template('river-detail.html', river=river, usgs_id=site)
 
 
 if __name__ == '__main__':

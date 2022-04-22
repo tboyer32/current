@@ -3,6 +3,9 @@
 
 {% block body %}
 <h1>{{ river['name'] }}</h1>
+
+    <!-- TODO: check to make sure a value exists before displaying it -->
+
     <p>current flow: <b>{{ river['cfs'] }} cfs</b></p>
     <p>current gage height: <b>{{ river['gage_height'] }} ft</b></p>
     <p>current stream level: <b>{{ river['stream_level'] }}</b></p>
@@ -12,5 +15,5 @@
 
 {% block after_body %}
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script src="/static/js/parse-river-data.js"></script>
+<script id="parser" data-usgsId="{{ usgs_id }}" src="/static/js/parse-river-data.js"></script>
 {% endblock %}

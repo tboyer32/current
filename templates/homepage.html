@@ -19,7 +19,6 @@
 
 {% block body %}
 <h1>Welcome</h1>
-<p><a href="/river-detail">View a river</a></p>
 <div id="map"></div>
 {% endblock %}
 
@@ -41,7 +40,10 @@
     //
     // geolocation
     //
-    let initMap = true; //set this to true for testing until we figure out a button to search after map move
+
+    // TODO: figure out a button to search after map moves.
+    // for now use this toggle for testing so we're not sending queries every time we move the map
+    let initMap = true; 
 
     const geoOptions = {
         enableHighAccuracy: false,
@@ -54,7 +56,7 @@
         console.log(err.message);
     }
 
-    function displayCoords(position) {
+    function displayUserCoords(position) {
         const user_latitude  = position.coords.latitude;
         const user_longitude = position.coords.longitude;
         //console.log(`lat: ${user_latitude}, long: ${user_longitude}`);
@@ -79,7 +81,7 @@
         })
     };
 
-    navigator.geolocation.getCurrentPosition(displayCoords, geoError, geoOptions);
+    navigator.geolocation.getCurrentPosition(displayUserCoords, geoError, geoOptions);
 
     //
     // Get rivers from Flask
@@ -98,7 +100,9 @@
             
             new mapboxgl.Marker()
             .setLngLat([rivers[river]['longitude'], rivers[river]['latitude']])
-            .setPopup(new mapboxgl.Popup({closeButton: false}).setHTML(`${river}`)) // add popup
+            .setPopup(new mapboxgl.Popup(
+                {closeButton: false})
+                .setHTML(`<a href="/river-detail/${rivers[river]['usgs_id']}">${river}</a>`)) 
             .addTo(map)
             .togglePopup();
         }
