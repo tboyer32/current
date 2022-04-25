@@ -10,7 +10,7 @@ function make_d3_obj(clean_data){ //rename this function to be more specific
   const month = d.getMonth()+1;
   
   today_data = parsed_data.find(data => data.month_nu == month && data.day_nu == day);
-  document.querySelector('#historical-values').innerHTML = `Mean Historic Value: <b>${today_data.p50_va} cfs</b>`;
+  document.querySelector('#historical-values').innerHTML = `Median Historic Value: <b>${today_data.p50_va} cfs</b>`;
 };
 
 fetch(`https://waterservices.usgs.gov/nwis/stat/?format=rdb,1.0&sites=${usgsId}&statReportType=daily&statTypeCd=p25,p50,p75&parameterCd=00060`)

@@ -33,7 +33,7 @@
         container: 'map', // container id
         style: 'mapbox://styles/mapbox/outdoors-v11', // style URL
         center: [-103.77, 44.96], // starting position [lng, lat] ---right now is US geographical center. Maybe change to SF CA
-        zoom: 7 // starting zoom
+        zoom: 9 // starting zoom
     });
 
 
@@ -87,7 +87,12 @@
     // Get rivers from Flask
     //
     function getRivers(bounds) {
-        fetch('/rivers')
+        const maxLat = bounds._ne.lat;
+        const maxLng = bounds._ne.lng;
+        const minLat = bounds._sw.lat;
+        const minLng = bounds._sw.lng;
+
+        fetch(`/rivers?maxLat=${maxLat}&minLat=${minLat}&maxLng=${maxLng}&minLng=${minLng}`)
         .then(response => response.json())
         .then(responseData => {
             //displayRivers(responseData);
@@ -96,7 +101,7 @@
     };
     function displayRivers(rivers){
         for (let river in rivers){
-            console.log(`name: ${river}, latitude: ${rivers[river]['latitude']}, longitude: ${rivers[river]['longitude']}`);
+            //console.log(`name: ${river}, latitude: ${rivers[river]['latitude']}, longitude: ${rivers[river]['longitude']}`);
             
             new mapboxgl.Marker()
             .setLngLat([rivers[river]['longitude'], rivers[river]['latitude']])
@@ -104,7 +109,6 @@
                 {closeButton: false})
                 .setHTML(`<a href="/river-detail/${rivers[river]['usgs_id']}">${river}</a>`)) 
             .addTo(map)
-            .togglePopup();
         }
     }
 </script>

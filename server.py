@@ -1,8 +1,10 @@
 from flask import (Flask, render_template, request, flash, session, redirect, jsonify)
 
-from pprint import pformat
 import os
 import requests
+
+from model import connect_to_db, db
+import crud
 
 app = Flask(__name__)
 app.secret_key = "dev"
@@ -17,23 +19,23 @@ MB_API_KEY = os.environ['MAPBOX_KEY']
 
 
 # This is temporary just to test my maps
-LOCATIONS = {
-    'kickapoo' : {
-        'usgs_id' : '05410490',
-        'latitude' : 43.18277778,
-        'longitude' : -90.8583333
-    },
-    'wisconsin' : {
-        'usgs_id' : '05404000',
-        'latitude' : 43.605,
-        'longitude' : -89.7566667
-    },
-    'st croix' : {
-        'usgs_id' : '05340500',
-        'latitude' : 45.4069444,
-        'longitude' : -92.6469444       
-    }
-}
+# LOCATIONS = {
+#     'kickapoo' : {
+#         'usgs_id' : '05410490',
+#         'latitude' : 43.18277778,
+#         'longitude' : -90.8583333
+#     },
+#     'wisconsin' : {
+#         'usgs_id' : '05404000',
+#         'latitude' : 43.605,
+#         'longitude' : -89.7566667
+#     },
+#     'st croix' : {
+#         'usgs_id' : '05340500',
+#         'latitude' : 45.4069444,
+#         'longitude' : -92.6469444       
+#     }
+# }
 
 
 @app.route('/')
@@ -43,13 +45,24 @@ def homepage():
     return render_template('homepage.html', mb_key=MB_API_KEY)
 
 
-@app.route('/rivers') #TODO rename this route rivers.json
+@app.route('/rivers') 
 def river_locations():
     """return locations of nearby rivers"""
 
     #this will eventually run a database query against the user's map lat and long bounding box
+    max_lat = float(request.args.get('maxLat'))
+    min_lat = float(request.args.get('minLat'))
+    max_lng = float(request.args.get('maxLng'))
+    min_lng = float(request.args.get('minLng'))
 
-    return jsonify(LOCATIONS)
+    locations = {}
+
+    river_results = crud.get_rivers(max_lat, min_lat, max_lng, min_lng)
+
+    for river in river_results:
+        locations[river.name] = {'usgs_id': river.usgs_id, 'latitude': river.latitude, 'longitude': river.longitude}
+
+    return jsonify(locations)
 
 
 
@@ -107,4 +120,6 @@ def river_detail(usgs_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0')
+
+    connect_to_db(app)
+    app.run(host='0.0.0.0', debug=True)
