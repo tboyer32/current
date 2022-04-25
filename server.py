@@ -18,26 +18,6 @@ OW_API_KEY = os.environ['OPEN_WEATHER_KEY']
 MB_API_KEY = os.environ['MAPBOX_KEY']
 
 
-# This is temporary just to test my maps
-# LOCATIONS = {
-#     'kickapoo' : {
-#         'usgs_id' : '05410490',
-#         'latitude' : 43.18277778,
-#         'longitude' : -90.8583333
-#     },
-#     'wisconsin' : {
-#         'usgs_id' : '05404000',
-#         'latitude' : 43.605,
-#         'longitude' : -89.7566667
-#     },
-#     'st croix' : {
-#         'usgs_id' : '05340500',
-#         'latitude' : 45.4069444,
-#         'longitude' : -92.6469444       
-#     }
-# }
-
-
 @app.route('/')
 def homepage():
     """Show homepage."""
@@ -63,7 +43,6 @@ def river_locations():
         locations[river.name] = {'usgs_id': river.usgs_id, 'latitude': river.latitude, 'longitude': river.longitude}
 
     return jsonify(locations)
-
 
 
 @app.route('/river-detail/<usgs_id>')

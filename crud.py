@@ -17,7 +17,11 @@ def create_river(usgs_id, name, longitude, latitude):
 def get_rivers(max_lat, min_lat, max_lng, min_lng):
     """get rivers within the map bounding box"""
 
-    return River.query.filter((River.latitude < max_lat) & (River.latitude > min_lat) & (River.longitude < max_lng) & (River.longitude > min_lng)).all()
+    return River.query.filter(
+        (River.latitude < max_lat) 
+        & (River.latitude > min_lat) 
+        & (River.longitude < max_lng) 
+        & (River.longitude > min_lng)).all()
 
 
 def create_user(username, email, password):

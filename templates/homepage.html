@@ -9,9 +9,6 @@
 </style>
 <link href="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.css" rel="stylesheet">
 <script src="https://api.mapbox.com/mapbox-gl-js/v2.8.1/mapbox-gl.js"></script>
-<script>
-
-</script>
 {% endblock %}
 
 {% block title %}Welcome to Current{% endblock %}
@@ -25,91 +22,16 @@
 
 {% block after_body %}
 <script>
-    //
-    // Display the mapbox
-    //
-    mapboxgl.accessToken = '{{ mb_key }}';
-    let map = new mapboxgl.Map({
-        container: 'map', // container id
-        style: 'mapbox://styles/mapbox/outdoors-v11', // style URL
-        center: [-103.77, 44.96], // starting position [lng, lat] ---right now is US geographical center. Maybe change to SF CA
-        zoom: 9 // starting zoom
-    });
-
-
-    //
-    // geolocation
-    //
-
-    // TODO: figure out a button to search after map moves.
-    // for now use this toggle for testing so we're not sending queries every time we move the map
-    let initMap = true; 
-
-    const geoOptions = {
-        enableHighAccuracy: false,
-        timeout: 5000,
-        maximumAge: Infinity
-    };
-
-    function geoError(err){
-        console.log(err.code);
-        console.log(err.message);
-    }
-
-    function displayUserCoords(position) {
-        const user_latitude  = position.coords.latitude;
-        const user_longitude = position.coords.longitude;
-        //console.log(`lat: ${user_latitude}, long: ${user_longitude}`);
-
-        //approximately 80 miles lat/long - may need to tweak this
-        let range = .25/2;
-
-        //move the map to the user's location
-        map.flyTo({
-            center: [
-                user_longitude,
-                user_latitude
-            ],
-            essential: true // this animation is considered essential with respect to prefers-reduced-motion
-        });
-        map.on('moveend', () => {
-            const bounds = map.getBounds();
-            if(initMap === true){
-                getRivers(bounds);
-                initMap = false;
-            }
-        })
-    };
-
-    navigator.geolocation.getCurrentPosition(displayUserCoords, geoError, geoOptions);
-
-    //
-    // Get rivers from Flask
-    //
-    function getRivers(bounds) {
-        const maxLat = bounds._ne.lat;
-        const maxLng = bounds._ne.lng;
-        const minLat = bounds._sw.lat;
-        const minLng = bounds._sw.lng;
-
-        fetch(`/rivers?maxLat=${maxLat}&minLat=${minLat}&maxLng=${maxLng}&minLng=${minLng}`)
-        .then(response => response.json())
-        .then(responseData => {
-            //displayRivers(responseData);
-            displayRivers(responseData);
-        });
-    };
-    function displayRivers(rivers){
-        for (let river in rivers){
-            //console.log(`name: ${river}, latitude: ${rivers[river]['latitude']}, longitude: ${rivers[river]['longitude']}`);
-            
-            new mapboxgl.Marker()
-            .setLngLat([rivers[river]['longitude'], rivers[river]['latitude']])
-            .setPopup(new mapboxgl.Popup(
-                {closeButton: false})
-                .setHTML(`<a href="/river-detail/${rivers[river]['usgs_id']}">${river}</a>`)) 
-            .addTo(map)
-        }
-    }
+//
+// Display the mapbox
+//
+mapboxgl.accessToken = '{{ mb_key }}';
+let map = new mapboxgl.Map({
+    container: 'map', // container id
+    style: 'mapbox://styles/mapbox/outdoors-v11', // style URL
+    center: [-103.77, 44.96], // starting position [lng, lat] ---right now is US geographical center. Maybe change to SF CA
+    zoom: 9 // starting zoom
+});
 </script>
+<script src="static/js/locate-rivers.js"></script>
 {% endblock %}

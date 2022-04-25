@@ -1,9 +1,7 @@
-let parsed_data = ''; //this global variable is just here for ease of testing. REMOVE ME.
-
 const usgsId = document.querySelector('#parser').getAttribute("data-usgsId");
 
 function make_d3_obj(clean_data){ //rename this function to be more specific
-  parsed_data = d3.tsvParse(clean_data);
+  const parsed_data = d3.tsvParse(clean_data);
 
   const d = new Date();
   const day = d.getDate();
