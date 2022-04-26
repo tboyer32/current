@@ -4,7 +4,7 @@ from model import db, River, Fav, User, connect_to_db
 
 
 def create_river(usgs_id, name, longitude, latitude):
-    """Create and return a new movie."""
+    """Create and return a new river."""
 
     river = River(usgs_id = usgs_id,
                   name = name,
@@ -22,6 +22,12 @@ def get_rivers(max_lat, min_lat, max_lng, min_lng):
         & (River.latitude > min_lat) 
         & (River.longitude < max_lng) 
         & (River.longitude > min_lng)).all()
+
+
+def get_river_by_usgs_id(usgs_id):
+    """Return river by usgs_id."""
+
+    return River.query.filter(River.usgs_id == usgs_id).first()
 
 
 def create_user(username, email, phone, password):
@@ -48,6 +54,14 @@ def get_user_by_id(user_id):
     """Return user by id."""
 
     return User.query.get(user_id)
+
+
+def create_fav(user_id, river_id):
+    """fav a river"""
+
+    fav = Fav(user_id=user_id, river_id=river_id)
+
+    return fav
 
 
 if __name__ == '__main__':

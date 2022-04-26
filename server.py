@@ -9,7 +9,7 @@ import crud
 app = Flask(__name__)
 app.secret_key = "dev"
 
-# This configuration for Flask interactive debugger
+# This configuration is for Flask interactive debugger
 # TODO REMOVE IN PRODUCTION
 app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = True
 
@@ -29,7 +29,6 @@ def homepage():
 def river_locations():
     """return locations of nearby rivers"""
 
-    #this will eventually run a database query against the user's map lat and long bounding box
     max_lat = float(request.args.get('maxLat'))
     min_lat = float(request.args.get('minLat'))
     max_lng = float(request.args.get('maxLng'))
@@ -49,26 +48,13 @@ def river_locations():
 def river_detail(usgs_id):
     """Show a river detail page."""
 
-    #https://waterservices.usgs.gov/nwis/iv/?format=json&sites=05410490&parameterCd=00060,00065,63160,00010
-
-    #animas
-    #site = '09361500'
-    #Kickapoo
-    #site = '05410490'
-    #Wisconsin
-    #site = '05404000'
-    #St. Croix - has temp, cfs, gage height and stream height
-    #site = '05340500'
-
-    site = usgs_id
-
     api_params = ['00060','00065','63160','00010']
     cfs_code, gage_code, st_level_code, temp_code = api_params
 
     param_codes = f"{cfs_code},{gage_code},{st_level_code},{temp_code}"
 
     url = 'https://waterservices.usgs.gov/nwis/iv/?format=json'
-    payload = {'sites': site, 'parameterCD': param_codes}
+    payload = {'sites': usgs_id, 'parameterCD': param_codes}
 
     response = requests.get(url, params=payload)
     river_data = response.json()
@@ -94,13 +80,30 @@ def river_detail(usgs_id):
         elif var_code == temp_code:
             river['temp'] = param['values'][0]['value'][0]['value']
 
+    return render_template('river-detail.html', river=river, usgs_id=usgs_id)
 
-    return render_template('river-detail.html', river=river, usgs_id=site)
+
+@app.route('/fav-river/<usgs_id>', methods=["POST"])
+def fav_river(usgs_id):
+
+    session_user = session.get('user_id', False)
+    
+    user = crud.get_user_by_id(session_user)
+    river = crud.get_river_by_usgs_id(usgs_id)
+
+    fav = crud.create_fav(user.user_id, river.river_id)
+
+    db.session.add(fav)
+    db.session.commit()
+
+    flash(f"River saved!")
+
+    return redirect(f'/river-detail/{usgs_id}')
 
 
 @app.route('/create-account')
 def create_account():
-    """Create an account"""
+    """Create an account page"""
 
     return render_template('create-account.html')
 
@@ -121,6 +124,24 @@ def register_user():
         db.session.add(user)
         db.session.commit()
         flash('Account created successfully')
+
+    return redirect('/')
+
+
+@app.route('/login', methods=["POST"])
+def user_login():
+    """Verify user login"""
+
+    email = request.form.get('email')
+    password = request.form.get('password')
+
+    verified_user = crud.verify_user(email, password)
+
+    if verified_user:
+        session['user_id'] = verified_user.user_id
+        flash("Logged in!")
+    else:
+        flash('Login unsuccesful!')
 
     return redirect('/')
 

@@ -2,7 +2,7 @@
 {% block title %}Welcome to Current{% endblock %}
 
 {% block body %}
-<h1>{{ river['name'] }}</h1>
+<h1>{{ river['name'] }}{{ usgs_id }}</h1>
 
     <!-- TODO: check to make sure a value exists before displaying it -->
 
@@ -11,6 +11,14 @@
     <!--<p>current stream level: <b>{{ river['stream_level'] }}</b></p>
     <p>current temp (C): <b>{{ river['temp'] }}</b></p>-->
     <p id="historical-values"></p>
+    
+    {% if session['user_id'] %}
+        <!-- TODO: Only show this link if the user is logged in. Toggle to unfav if they're logged in and already have it saved-->
+        <form id="fav" action="/fav-river/{{usgs_id}}" method="POST">
+            <button type="submit">Fav me</button>
+        </form>
+    {% endif %}
+
 {% endblock %}
 
 {% block after_body %}
