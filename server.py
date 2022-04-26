@@ -98,6 +98,33 @@ def river_detail(usgs_id):
     return render_template('river-detail.html', river=river, usgs_id=site)
 
 
+@app.route('/create-account')
+def create_account():
+    """Create an account"""
+
+    return render_template('create-account.html')
+
+
+@app.route('/register-user', methods=['POST'])
+def register_user():
+    """Register a user"""
+
+    username = request.form.get('username')
+    email = request.form.get('email')
+    phone = request.form.get('phone')
+    password = request.form.get('password')
+
+    if (crud.get_user_by_email(email)):
+        flash('User already exists')
+    else:
+        user = crud.create_user(username, email, phone, password)
+        db.session.add(user)
+        db.session.commit()
+        flash('Account created successfully')
+
+    return redirect('/')
+
+
 if __name__ == '__main__':
 
     connect_to_db(app)

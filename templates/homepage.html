@@ -16,6 +16,17 @@
 
 {% block body %}
 <h1>Welcome</h1>
+
+<a href="/create-account">Create an account</a>
+
+<form id="login" method="post">
+    <label for="username">username</label>
+    <input type="text" name="username">
+    <label for="password">password</label>
+    <input type="password" name="password">
+    <button type="submit">Log In</button>
+</form>
+
 <div id="map"></div>
 {% endblock %}
 
@@ -30,7 +41,7 @@ let map = new mapboxgl.Map({
     container: 'map', // container id
     style: 'mapbox://styles/mapbox/outdoors-v11', // style URL
     center: [-103.77, 44.96], // starting position [lng, lat] ---right now is US geographical center. Maybe change to SF CA
-    zoom: 9 // starting zoom
+    zoom: 8 // starting zoom
 });
 </script>
 <script src="static/js/locate-rivers.js"></script>

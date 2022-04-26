@@ -1,0 +1,24 @@
+{% extends 'base.html' %}
+
+{% block scripts %}
+{% endblock %}
+
+{% block title %}Current - Create an Account{% endblock %}
+
+{% block body %}
+<h1>Create an Account</h1>
+<form action="register-user" method="POST">
+    <label for="username">Username</label>
+    <input type="text" id="username" name="username">
+    <label for="email">Email Address</label>
+    <input type="email" id="email" name="email">
+    <label for="phone">Phone Number</label>
+    <input type="tel" id="phone" name="phone">
+    <label for="password">Password</label>
+    <input type="password" id="password" name="password">
+    <button type="submit">Create an Account</button>
+</form>
+{% endblock %}
+
+{% block after_body %}
+{% endblock %}

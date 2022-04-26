@@ -24,12 +24,30 @@ def get_rivers(max_lat, min_lat, max_lng, min_lng):
         & (River.longitude > min_lng)).all()
 
 
-def create_user(username, email, password):
+def create_user(username, email, phone, password):
     """Create and return a new user."""
 
-    user = User(username=username, email=email, password=password)
+    user = User(username=username, email=email, phone=phone, password=password)
 
     return user
+
+
+def verify_user(email, password):
+    """Verify user login."""
+
+    return User.query.filter(User.email == email, User.password == password).first()
+
+
+def get_user_by_email(email):
+    """Return user by email."""
+
+    return User.query.filter(User.email == email).first()
+
+
+def get_user_by_id(user_id):
+    """Return user by id."""
+
+    return User.query.get(user_id)
 
 
 if __name__ == '__main__':

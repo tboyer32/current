@@ -37,7 +37,7 @@ class User(db.Model):
     username = db.Column(db.String, nullable=False)
     email = db.Column(db.String, nullable=False)
     password = db.Column(db.String, nullable=False)
-    phone = db.Column(db.Integer, nullable=True)
+    phone = db.Column(db.String, nullable=True)
 
     #backref Favs
 
