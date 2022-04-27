@@ -18,6 +18,51 @@ OW_API_KEY = os.environ['OPEN_WEATHER_KEY']
 MB_API_KEY = os.environ['MAPBOX_KEY']
 
 
+
+def get_usgs_inst(usgs_id):
+    """query the usgs instantaneous value API"""
+
+    api_params = ['00060','00065','63160','00010']
+    cfs_code, gage_code, st_level_code, temp_code = api_params
+
+    param_codes = f"{cfs_code},{gage_code},{st_level_code},{temp_code}"
+
+    url = 'https://waterservices.usgs.gov/nwis/iv/?format=json'
+    payload = {'sites': usgs_id, 'parameterCD': param_codes}
+
+    response = requests.get(url, params=payload)
+    river_data = response.json()
+
+    timeSeries = river_data['value']['timeSeries']
+    river_name = timeSeries[0]["sourceInfo"]["siteName"]
+
+    db_river = crud.get_river_by_usgs_id(usgs_id)
+
+    river = {
+        'name' : river_name,
+        'usgs_id' : usgs_id,
+        'river_id' : db_river.river_id
+    }
+
+    for param in timeSeries:
+        var_code = param['variable']['variableCode'][0]['value']
+
+        if var_code == cfs_code:
+            river['cfs'] = param['values'][0]['value'][0]['value']
+        elif var_code == gage_code:
+            river['gage_height'] = param['values'][0]['value'][0]['value']
+        elif var_code == st_level_code:
+            river['stream_level'] = param['values'][0]['value'][0]['value']
+        elif var_code == temp_code:
+            river['temp'] = param['values'][0]['value'][0]['value']
+
+    return river
+
+
+# ===========================================================================
+# ROUTES
+# ===========================================================================
+
 @app.route('/')
 def homepage():
     """Show homepage."""
@@ -25,8 +70,8 @@ def homepage():
     return render_template('homepage.html', mb_key=MB_API_KEY)
 
 
-@app.route('/rivers') 
-def river_locations():
+@app.route('/locate-rivers') 
+def locate_rivers():
     """return locations of nearby rivers"""
 
     max_lat = float(request.args.get('maxLat'))
@@ -48,55 +93,52 @@ def river_locations():
 def river_detail(usgs_id):
     """Show a river detail page."""
 
-    api_params = ['00060','00065','63160','00010']
-    cfs_code, gage_code, st_level_code, temp_code = api_params
+    river_data = get_usgs_inst(usgs_id)
 
-    param_codes = f"{cfs_code},{gage_code},{st_level_code},{temp_code}"
-
-    url = 'https://waterservices.usgs.gov/nwis/iv/?format=json'
-    payload = {'sites': usgs_id, 'parameterCD': param_codes}
-
-    response = requests.get(url, params=payload)
-    river_data = response.json()
+    #need to check whether a user has favorited this river
+    user_id = session.get('user_id', False)
     
+    if(user_id):
+        fav = crud.get_fav(user_id, river_data['river_id'])
+    else:
+        fav = False
 
-    #TODO I feel like there should be an easier/more elegant way to do this.
-    timeSeries = river_data['value']['timeSeries']
-    river_name = timeSeries[0]["sourceInfo"]["siteName"]
-
-    river = {
-        'name': river_name
-    }
-
-    for param in timeSeries:
-        var_code = param['variable']['variableCode'][0]['value']
-
-        if var_code == cfs_code:
-            river['cfs'] = param['values'][0]['value'][0]['value']
-        elif var_code == gage_code:
-            river['gage_height'] = param['values'][0]['value'][0]['value']
-        elif var_code == st_level_code:
-            river['stream_level'] = param['values'][0]['value'][0]['value']
-        elif var_code == temp_code:
-            river['temp'] = param['values'][0]['value'][0]['value']
-
-    return render_template('river-detail.html', river=river, usgs_id=usgs_id)
+    return render_template('river-detail.html', river_data=river_data, fav=fav)
 
 
 @app.route('/fav-river/<usgs_id>', methods=["POST"])
 def fav_river(usgs_id):
 
     session_user = session.get('user_id', False)
+    river_id = request.form.get('river_id')
     
     user = crud.get_user_by_id(session_user)
-    river = crud.get_river_by_usgs_id(usgs_id)
 
-    fav = crud.create_fav(user.user_id, river.river_id)
+    fav = crud.create_fav(user.user_id, river_id)
 
     db.session.add(fav)
     db.session.commit()
 
     flash(f"River saved!")
+
+    return redirect(f'/river-detail/{usgs_id}')
+
+
+@app.route('/unfav-river/<usgs_id>', methods=["POST"])
+def unfav_river(usgs_id):
+
+    session_user = session.get('user_id', False)
+    river_id = request.form.get('river_id')
+    
+    user = crud.get_user_by_id(session_user)
+
+    fav = crud.get_fav(user.user_id, river_id)
+
+    ###!!! THIS ISN'T WORKING
+    db.session.delete(fav)
+    db.session.commit()
+
+    flash(f"River unsaved!")
 
     return redirect(f'/river-detail/{usgs_id}')
 

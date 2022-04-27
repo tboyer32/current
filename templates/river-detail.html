@@ -2,26 +2,36 @@
 {% block title %}Welcome to Current{% endblock %}
 
 {% block body %}
-<h1>{{ river['name'] }}{{ usgs_id }}</h1>
+<h1>{{ river_data['name'] }} {{ river_data['usgs_id'] }}</h1>
 
     <!-- TODO: check to make sure a value exists before displaying it -->
 
-    <p>current flow: <b>{{ river['cfs'] }} cfs</b></p>
-    <p>current gage height: <b>{{ river['gage_height'] }} ft</b></p>
-    <!--<p>current stream level: <b>{{ river['stream_level'] }}</b></p>
-    <p>current temp (C): <b>{{ river['temp'] }}</b></p>-->
+    <p>current flow: <b>{{ river_data['cfs'] }} cfs</b></p>
+    <p>current gage height: <b>{{ river_data['gage_height'] }} ft</b></p>
+    <!--<p>current stream level: <b>{{ river_data['stream_level'] }}</b></p>
+    <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>-->
     <p id="historical-values"></p>
-    
-    {% if session['user_id'] %}
-        <!-- TODO: Only show this link if the user is logged in. Toggle to unfav if they're logged in and already have it saved-->
-        <form id="fav" action="/fav-river/{{usgs_id}}" method="POST">
+    <p>{{fav}}</p>
+
+    {% if session['user_id'] and not fav %}
+        <form id="fav" action="/fav-river/{{ river_data['usgs_id']}}" method="POST">
+            <input type="hidden" name="{{river_data['river_id']}}">
             <button type="submit">Fav me</button>
         </form>
+    {% elif fav %}
+    <form id="fav" action="/unfav-river/{{ river_data['usgs_id']}}" method="POST">
+        <input type="hidden" name="{{river_data['river_id']}}">
+        <button type="submit">Unfav me</button>
+    </form>
+
+    {% else %}
+        <p>log in to fav me</p>
     {% endif %}
+
 
 {% endblock %}
 
 {% block after_body %}
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script id="parser" data-usgsId="{{ usgs_id }}" src="/static/js/parse-river-data.js"></script>
+<script id="parser" data-usgsId="{{ river_data['usgs_id'] }}" src="/static/js/parse-river-data.js"></script>
 {% endblock %}

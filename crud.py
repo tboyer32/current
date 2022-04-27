@@ -64,6 +64,12 @@ def create_fav(user_id, river_id):
     return fav
 
 
+def get_fav(user_id, river_id):
+    """get a fav"""
+
+    return Fav.query.filter(Fav.user_id == user_id, Fav.river_id == river_id).first()
+
+
 if __name__ == '__main__':
     from server import app
     connect_to_db(app)

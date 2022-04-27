@@ -62,7 +62,7 @@ class Fav(db.Model):
     river = db.relationship("River", backref="rivers")
 
     def __repr__(self):
-        return f"<Fav fav_id = {self.fav_id} user_id = {self.user_id} river_id = {river_id}>"
+        return f"<Fav fav_id = {self.fav_id} user_id = {self.user_id} river_id = {self.river_id}>"
 
 
 def connect_to_db(flask_app, db_uri="postgresql:///riverdb", echo=True):
@@ -79,8 +79,5 @@ def connect_to_db(flask_app, db_uri="postgresql:///riverdb", echo=True):
 if __name__ == "__main__":
     from server import app
 
-    # Call connect_to_db(app, echo=False) if your program output gets
-    # too annoying; this will tell SQLAlchemy not to print out every
-    # query it executes.
-
+    # Call connect_to_db(app, echo=False) if your program output gets too annoying; 
     connect_to_db(app)
