@@ -2,7 +2,7 @@
 {% block title %}Welcome to Current{% endblock %}
 
 {% block body %}
-<h1>{{ river_data['name'] }} {{ river_data['usgs_id'] }}</h1>
+<h1>{{ river_data['name'] }}</h1>
 
     <!-- TODO: check to make sure a value exists before displaying it -->
 
@@ -11,19 +11,17 @@
     <!--<p>current stream level: <b>{{ river_data['stream_level'] }}</b></p>
     <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>-->
     <p id="historical-values"></p>
-    <p>{{fav}}</p>
 
     {% if session['user_id'] and not fav %}
         <form id="fav" action="/fav-river/{{ river_data['usgs_id']}}" method="POST">
-            <input type="hidden" name="{{river_data['river_id']}}">
+            <input type="hidden" name="river_id" value="{{river_data['river_id']}}">
             <button type="submit">Fav me</button>
         </form>
     {% elif fav %}
-    <form id="fav" action="/unfav-river/{{ river_data['usgs_id']}}" method="POST">
-        <input type="hidden" name="{{river_data['river_id']}}">
-        <button type="submit">Unfav me</button>
-    </form>
-
+        <form id="fav" action="/unfav-river/{{ river_data['usgs_id']}}" method="POST">
+            <input type="hidden" name="river_id" value="{{river_data['river_id']}}">
+            <button type="submit">Unfav me</button>
+        </form>
     {% else %}
         <p>log in to fav me</p>
     {% endif %}
