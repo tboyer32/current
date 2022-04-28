@@ -17,16 +17,21 @@
 {% block body %}
 <h1>Welcome</h1>
 
-<!-- TODO: only show create account and login if logged out-->
-<a href="/create-account">Create an account</a>
+{% if session['user_id'] %}
+    <form action="logout" id="logout" method="POST">
+        <button type="submit">Log Out</button>
+    </form>
+{% else %}
+    <a href="/create-account">Create an account</a>
 
-<form action="login" id="login" method="POST">
-    <label for="email">email</label>
-    <input type="text" name="email">
-    <label for="password">password</label>
-    <input type="password" name="password">
-    <button type="submit">Log In</button>
-</form>
+    <form action="login" id="login" method="POST">
+        <label for="email">email</label>
+        <input type="text" name="email">
+        <label for="password">password</label>
+        <input type="password" name="password">
+        <button type="submit">Log In</button>
+    </form>
+{% endif %}
 
 <div id="map"></div>
 {% endblock %}

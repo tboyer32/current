@@ -18,7 +18,6 @@ OW_API_KEY = os.environ['OPEN_WEATHER_KEY']
 MB_API_KEY = os.environ['MAPBOX_KEY']
 
 
-
 def get_usgs_inst(usgs_id):
     """query the usgs instantaneous value API"""
 
@@ -108,13 +107,14 @@ def river_detail(usgs_id):
 
 @app.route('/fav-river/<usgs_id>', methods=["POST"])
 def fav_river(usgs_id):
+    """Add a river to favorites"""
 
-    session_user = session.get('user_id', False)
+    user_id = session.get('user_id', False)
     river_id = request.form.get('river_id')
     
-    user = crud.get_user_by_id(session_user)
+    #user = crud.get_user_by_id(session_user)
 
-    fav = crud.create_fav(user.user_id, river_id)
+    fav = crud.create_fav(user_id, river_id)
 
     db.session.add(fav)
     db.session.commit()
@@ -126,13 +126,12 @@ def fav_river(usgs_id):
 
 @app.route('/unfav-river/<usgs_id>', methods=["POST"])
 def unfav_river(usgs_id):
+    """Remove a river from favorites"""
 
-    session_user = session.get('user_id', False)
+    user_id = session.get('user_id', False)
     river_id = request.form.get('river_id')
     
-    user = crud.get_user_by_id(session_user)
-
-    fav = crud.get_fav(user.user_id, river_id)
+    fav = crud.get_fav(user_id, river_id)
 
     ###!!! THIS ISN'T WORKING
     db.session.delete(fav)
@@ -141,6 +140,20 @@ def unfav_river(usgs_id):
     flash(f"River unsaved!")
 
     return redirect(f'/river-detail/{usgs_id}')
+
+
+@app.route('/view-favs/<user_id>')
+def view_favs(user_id):
+    """View favorite rivers"""
+
+    #show the name of the river
+    #link to the river detail
+    #show the current cfs
+    #if the river has been favorited for more than one day show the change in river level since yesterday
+    #if it has rained in the last 48 hours show a rain icon
+    #button to opt in to notifications
+
+    #return render_template('favorites.html')
 
 
 @app.route('/create-account')
@@ -184,6 +197,17 @@ def user_login():
         flash("Logged in!")
     else:
         flash('Login unsuccesful!')
+
+    return redirect('/')
+
+
+@app.route('/logout', methods=["POST"])
+def user_logout():
+    """Log the user out"""
+
+    session.pop('user_id')
+    
+    flash('You have been logged out!')
 
     return redirect('/')
 
