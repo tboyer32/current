@@ -1,5 +1,5 @@
 {% extends 'base.html' %}
-{% block title %}Welcome to Current{% endblock %}
+{% block title %}{{ river_data['name'] }}{% endblock %}
 
 {% block body %}
 <h1>{{ river_data['name'] }}</h1>
@@ -8,8 +8,9 @@
 
     <p>current flow: <b>{{ river_data['cfs'] }} cfs</b></p>
     <p>current gage height: <b>{{ river_data['gage_height'] }} ft</b></p>
-    <!--<p>current stream level: <b>{{ river_data['stream_level'] }}</b></p>
-    <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>-->
+    {% if river_data['temp'] %}
+    <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>
+    {% endif %}
     <p id="historical-values"></p>
 
     {% if session['user_id'] and not fav %}

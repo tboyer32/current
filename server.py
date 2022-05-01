@@ -21,10 +21,11 @@ MB_API_KEY = os.environ['MAPBOX_KEY']
 def get_usgs_inst(usgs_id):
     """query the usgs instantaneous value API"""
 
-    api_params = ['00060','00065','63160','00010']
-    cfs_code, gage_code, st_level_code, temp_code = api_params
+    cfs_code = '00060'
+    gage_code = '00065'
+    temp_code = '00010'
 
-    param_codes = f"{cfs_code},{gage_code},{st_level_code},{temp_code}"
+    param_codes = f"{cfs_code},{gage_code},{temp_code}"
 
     url = 'https://waterservices.usgs.gov/nwis/iv/?format=json'
     payload = {'sites': usgs_id, 'parameterCD': param_codes}
@@ -50,8 +51,6 @@ def get_usgs_inst(usgs_id):
             river['cfs'] = param['values'][0]['value'][0]['value']
         elif var_code == gage_code:
             river['gage_height'] = param['values'][0]['value'][0]['value']
-        elif var_code == st_level_code:
-            river['stream_level'] = param['values'][0]['value'][0]['value']
         elif var_code == temp_code:
             river['temp'] = param['values'][0]['value'][0]['value']
 
@@ -94,7 +93,6 @@ def river_detail(usgs_id):
 
     river_data = get_usgs_inst(usgs_id)
 
-    #need to check whether a user has favorited this river
     user_id = session.get('user_id', False)
     
     if(user_id):
@@ -112,8 +110,6 @@ def fav_river(usgs_id):
     user_id = session.get('user_id', False)
     river_id = request.form.get('river_id')
     
-    #user = crud.get_user_by_id(session_user)
-
     fav = crud.create_fav(user_id, river_id)
 
     db.session.add(fav)
@@ -133,7 +129,6 @@ def unfav_river(usgs_id):
     
     fav = crud.get_fav(user_id, river_id)
 
-    ###!!! THIS ISN'T WORKING
     db.session.delete(fav)
     db.session.commit()
 
@@ -146,14 +141,20 @@ def unfav_river(usgs_id):
 def view_favs(user_id):
     """View favorite rivers"""
 
-    #show the name of the river
-    #link to the river detail
+    user_favs = crud.get_favs_by_user(user_id)
+
+    rivers = []
+
+    for fav in user_favs:
+        river = get_usgs_inst(fav.river.usgs_id)
+        rivers.append(river)
+
     #show the current cfs
     #if the river has been favorited for more than one day show the change in river level since yesterday
     #if it has rained in the last 48 hours show a rain icon
     #button to opt in to notifications
 
-    #return render_template('favorites.html')
+    return render_template('favorites.html', rivers=rivers)
 
 
 @app.route('/create-account')

@@ -1,3 +1,9 @@
+//modify this to:
+// take in one or multiple site numbers
+// modifity more than one dom element
+// take in a parameter (list of sites) from a function call
+
+
 const usgsId = document.querySelector('#parser').getAttribute("data-usgsId");
 
 function make_d3_obj(clean_data){ //rename this function to be more specific

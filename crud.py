@@ -70,6 +70,14 @@ def get_fav(user_id, river_id):
     return Fav.query.filter(Fav.user_id == user_id, Fav.river_id == river_id).first()
 
 
+def get_favs_by_user(user_id):
+    """get all the usgs_ids of favs by user"""
+
+    user_favs = Fav.query.filter(Fav.user_id == user_id).options(db.joinedload('river')).all()
+    
+    return user_favs
+
+
 if __name__ == '__main__':
     from server import app
     connect_to_db(app)

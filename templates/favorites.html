@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}Favorites{% endblock %}
+
+{% block body %}
+<h1>Favorites</h1>
+
+<dl>
+{% for river in rivers %}
+    <dt><a href="/river-detail/{{river.usgs_id}}">{{ river.name }}</a></dt>
+    <dd>
+        <ul>
+            <li>{{river.cfs}}</li>
+            <li>weather indicator</li>
+        </ul>
+        <a href="#">delete button</a>
+        <a href="#">get notified</a>
+    </dd>
+{% endfor %}
+</dl>
+
+{% endblock %}
+
+{% block after_body %}
+
+{% endblock %}
