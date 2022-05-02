@@ -13,7 +13,10 @@
             <li id="hist{{river.usgs_id}}"></li>
             <li>weather indicator</li>
         </ul>
-        <a href="#">delete button</a>
+        <form id="fav{{river.usgs_id}}" action="/unfav-river/{{ river.usgs_id }}" method="POST">
+            <input type="hidden" name="river_id" value="{{ river.river_id }}">
+            <button type="submit">Remove from favorites</button>
+        </form>
         <a href="#">get notified</a>
     </dd>
 {% endfor %}

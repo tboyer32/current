@@ -68,7 +68,7 @@ def homepage():
     return render_template('homepage.html', mb_key=MB_API_KEY)
 
 
-@app.route('/locate-rivers') 
+@app.route('/locate-rivers.json') 
 def locate_rivers():
     """return locations of nearby rivers"""
 
@@ -117,7 +117,7 @@ def fav_river(usgs_id):
 
     flash(f"River saved!")
 
-    return redirect(f'/river-detail/{usgs_id}')
+    return redirect(request.referrer)
 
 
 @app.route('/unfav-river/<usgs_id>', methods=["POST"])
@@ -134,7 +134,7 @@ def unfav_river(usgs_id):
 
     flash(f"River unsaved!")
 
-    return redirect(f'/river-detail/{usgs_id}')
+    return redirect(request.referrer)
 
 
 @app.route('/view-favs/<user_id>')

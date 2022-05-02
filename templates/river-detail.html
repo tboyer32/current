@@ -9,7 +9,7 @@
     <p>current flow: <b>{{ river_data['cfs'] }} cfs</b></p>
     <p>current gage height: <b>{{ river_data['gage_height'] }} ft</b></p>
     {% if river_data['temp'] %}
-    <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>
+        <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>
     {% endif %}
     <p id="hist{{river_data['usgs_id']}}"></p>
 

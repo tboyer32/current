@@ -49,7 +49,7 @@ function getRivers(bounds) {
     const minLat = bounds._sw.lat;
     const minLng = bounds._sw.lng;
 
-    fetch(`/locate-rivers?maxLat=${maxLat}&minLat=${minLat}&maxLng=${maxLng}&minLng=${minLng}`)
+    fetch(`/locate-rivers.json?maxLat=${maxLat}&minLat=${minLat}&maxLng=${maxLng}&minLng=${minLng}`)
     .then(response => response.json())
     .then(responseData => {
         displayRivers(responseData);
