@@ -11,7 +11,7 @@
     {% if river_data['temp'] %}
     <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>
     {% endif %}
-    <p id="historical-values"></p>
+    <p id="hist{{river_data['usgs_id']}}"></p>
 
     {% if session['user_id'] and not fav %}
         <form id="fav" action="/fav-river/{{ river_data['usgs_id']}}" method="POST">
@@ -32,5 +32,5 @@
 
 {% block after_body %}
 <script src="https://d3js.org/d3.v7.min.js"></script>
-<script id="parser" data-usgsId="{{ river_data['usgs_id'] }}" src="/static/js/parse-river-data.js"></script>
+<script id="parser" data-usgsIds="{{ river_data['usgs_id'] }}" data-cfsValues="{{ river_data['cfs'] }}" src="/static/js/parse-river-data.js"></script>
 {% endblock %}

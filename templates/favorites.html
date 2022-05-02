@@ -10,6 +10,7 @@
     <dd>
         <ul>
             <li>{{river.cfs}}</li>
+            <li id="hist{{river.usgs_id}}"></li>
             <li>weather indicator</li>
         </ul>
         <a href="#">delete button</a>
@@ -17,9 +18,9 @@
     </dd>
 {% endfor %}
 </dl>
-
 {% endblock %}
 
 {% block after_body %}
-
+<script src="https://d3js.org/d3.v7.min.js"></script>
+<script id="parser" data-usgsIds="{{ usgs_ids }}" data-cfsValues="{{ cfs_values }}" src="/static/js/parse-river-data.js"></script>
 {% endblock %}

@@ -144,17 +144,33 @@ def view_favs(user_id):
     user_favs = crud.get_favs_by_user(user_id)
 
     rivers = []
+    id_list = []
+    cfs_list = []
 
     for fav in user_favs:
-        river = get_usgs_inst(fav.river.usgs_id)
+        #get a river from the USGS API using the usgs_id
+        usgs_id = fav.river.usgs_id
+        river = get_usgs_inst(usgs_id)
+        
+        #append the river_dict returned from get_usgs_inst to the river list
         rivers.append(river)
 
-    #show the current cfs
+        #append the usgs_id to the id list so that we can turn it into a string for the front end
+        id_list.append(usgs_id)
+
+        #get the cfs values from the river dict and add it to a list so we can format it for the front end
+        cfs = river.get('cfs', 0)
+        cfs_list.append(cfs)
+
+    usgs_ids = ",".join(id_list)
+    cfs_values = ",".join(cfs_list)
+
+    #show the current cfs DONE
     #if the river has been favorited for more than one day show the change in river level since yesterday
     #if it has rained in the last 48 hours show a rain icon
     #button to opt in to notifications
 
-    return render_template('favorites.html', rivers=rivers)
+    return render_template('favorites.html', rivers=rivers, usgs_ids=usgs_ids, cfs_values=cfs_values)
 
 
 @app.route('/create-account')
