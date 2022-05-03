@@ -21,6 +21,12 @@
     </dd>
 {% endfor %}
 </dl>
+{% if prev_page %}
+    <p><a href="/view-favs?user-id={{user_id}}&page={{prev_page}}">Prev Page: {{prev_page}}</a></p>
+{% endif %}
+{% if next_page %}
+    <p><a href="/view-favs?user-id={{user_id}}&page={{next_page}}">Next Page: {{next_page}}</a></p>
+{% endif %} 
 {% endblock %}
 
 {% block after_body %}

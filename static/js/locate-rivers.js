@@ -31,10 +31,10 @@ function displayUserCoords(position) {
     });
     map.on('moveend', () => {
         const bounds = map.getBounds();
-        if(initMap === true){
+        //if(initMap === true){
             getRivers(bounds);
             initMap = false;
-        }
+        //}
     })
 };
 

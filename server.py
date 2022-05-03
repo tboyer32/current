@@ -137,17 +137,30 @@ def unfav_river(usgs_id):
     return redirect(request.referrer)
 
 
-@app.route('/view-favs/<user_id>')
-def view_favs(user_id):
+@app.route('/view-favs', methods=['GET'])
+def view_favs():
     """View favorite rivers"""
 
-    user_favs = crud.get_favs_by_user(user_id)
+    #TODO
+    #if the river has been favorited for more than one day show the change in river level since yesterday
+    #if it has rained in the last 48 hours show a rain icon
+    #button to opt in to notifications
 
+    user_id = request.args.get('user-id')
+    
+    #values to pass in to crud to handle pagination
+    current_page = request.args.get('page', 1, type=int)
+    num_results = 10
+
+    #query the db
+    user_favs = crud.get_favs_by_user(user_id, current_page, num_results)
+
+    #values to pass into the template
     rivers = []
     id_list = []
     cfs_list = []
 
-    for fav in user_favs:
+    for fav in user_favs.items:
         #get a river from the USGS API using the usgs_id
         usgs_id = fav.river.usgs_id
         river = get_usgs_inst(usgs_id)
@@ -162,15 +175,21 @@ def view_favs(user_id):
         cfs = river.get('cfs', 0)
         cfs_list.append(cfs)
 
+    #format the lists into comma separated strings for js purposes
     usgs_ids = ",".join(id_list)
     cfs_values = ",".join(cfs_list)
 
-    #show the current cfs DONE
-    #if the river has been favorited for more than one day show the change in river level since yesterday
-    #if it has rained in the last 48 hours show a rain icon
-    #button to opt in to notifications
+    #pagination for template
+    next_page = False
+    prev_page = False
 
-    return render_template('favorites.html', rivers=rivers, usgs_ids=usgs_ids, cfs_values=cfs_values)
+    if user_favs.has_next:
+        next_page = user_favs.next_num
+    if user_favs.has_prev:
+        prev_page = user_favs.prev_num
+
+    return render_template('favorites.html', rivers=rivers, usgs_ids=usgs_ids, cfs_values=cfs_values, 
+                            prev_page=prev_page, next_page=next_page, user_id=user_id)
 
 
 @app.route('/create-account')
@@ -195,6 +214,10 @@ def register_user():
         user = crud.create_user(username, email, phone, password)
         db.session.add(user)
         db.session.commit()
+
+        user_id = user.user_id
+        session['user_id'] = user_id
+
         flash('Account created successfully')
 
     return redirect('/')
