@@ -12,6 +12,8 @@
         <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>
     {% endif %}
     <p id="hist{{river_data['usgs_id']}}"></p>
+    <p>weather code: {{weather.condition_id}}</p>
+    <p>weather description: {{weather.weather_desc}}</p>
 
     {% if session['user_id'] and not fav %}
         <form id="fav" action="/fav-river/{{ river_data['usgs_id']}}" method="POST">
@@ -26,7 +28,6 @@
     {% else %}
         <p>log in to fav me</p>
     {% endif %}
-
 
 {% endblock %}
 

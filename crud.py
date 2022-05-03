@@ -73,8 +73,6 @@ def get_fav(user_id, river_id):
 
 def get_favs_by_user(user_id, page, per_page):
     """get all the usgs_ids of favs by user"""
-
-    #user_favs = Fav.query.filter(Fav.user_id == user_id).options(db.joinedload('river')).all()
     
     user_favs = Fav.query.filter(Fav.user_id == user_id).options(db.joinedload('river')).paginate(page, per_page=per_page)
     

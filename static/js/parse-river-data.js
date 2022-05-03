@@ -54,3 +54,4 @@ fetch(`https://waterservices.usgs.gov/nwis/stat/?format=rdb,1.0&sites=${usgsIds}
 
     initRivers(usgsIdArr, cfsValuesArr, data)
   });
+

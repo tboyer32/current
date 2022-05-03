@@ -18,8 +18,10 @@ OW_API_KEY = os.environ['OPEN_WEATHER_KEY']
 MB_API_KEY = os.environ['MAPBOX_KEY']
 
 
-def get_usgs_inst(usgs_id):
+def get_usgs_inst(river):
     """query the usgs instantaneous value API"""
+
+    usgs_id = river.usgs_id
 
     cfs_code = '00060'
     gage_code = '00065'
@@ -36,25 +38,40 @@ def get_usgs_inst(usgs_id):
     timeSeries = river_data['value']['timeSeries']
     river_name = timeSeries[0]["sourceInfo"]["siteName"]
 
-    db_river = crud.get_river_by_usgs_id(usgs_id)
-
-    river = {
+    river_dict = {
         'name' : river_name,
         'usgs_id' : usgs_id,
-        'river_id' : db_river.river_id
+        'river_id' : river.river_id
     }
 
     for param in timeSeries:
         var_code = param['variable']['variableCode'][0]['value']
 
         if var_code == cfs_code:
-            river['cfs'] = param['values'][0]['value'][0]['value']
+            river_dict['cfs'] = param['values'][0]['value'][0]['value']
         elif var_code == gage_code:
-            river['gage_height'] = param['values'][0]['value'][0]['value']
+            river_dict['gage_height'] = param['values'][0]['value'][0]['value']
         elif var_code == temp_code:
-            river['temp'] = param['values'][0]['value'][0]['value']
+            river_dict['temp'] = param['values'][0]['value'][0]['value']
 
-    return river
+    return river_dict
+
+
+def get_weather_api(river):
+    """get data from the open weather map api"""
+
+    url = 'https://api.openweathermap.org/data/2.5/weather'
+    payload = {'lat': river.latitude, 'lon': river.longitude, 'appid': OW_API_KEY}
+
+    response = requests.get(url, params=payload)
+    weather_data = response.json()
+
+    weather = {
+        'condition_id' : weather_data['weather'][0]['id'],
+        'weather_desc' : weather_data['weather'][0]['description']
+    }
+
+    return weather
 
 
 # ===========================================================================
@@ -91,16 +108,19 @@ def locate_rivers():
 def river_detail(usgs_id):
     """Show a river detail page."""
 
-    river_data = get_usgs_inst(usgs_id)
+    river = crud.get_river_by_usgs_id(usgs_id)
+    river_data = get_usgs_inst(river)
+    weather = get_weather_api(river)
 
+    #handle favorites
     user_id = session.get('user_id', False)
-    
+
     if(user_id):
         fav = crud.get_fav(user_id, river_data['river_id'])
     else:
         fav = False
 
-    return render_template('river-detail.html', river_data=river_data, fav=fav)
+    return render_template('river-detail.html', river_data=river_data, fav=fav, weather=weather)
 
 
 @app.route('/fav-river/<usgs_id>', methods=["POST"])
@@ -143,8 +163,7 @@ def view_favs():
 
     #TODO
     #if the river has been favorited for more than one day show the change in river level since yesterday
-    #if it has rained in the last 48 hours show a rain icon
-    #button to opt in to notifications
+    #opt in to notifications
 
     user_id = request.args.get('user-id')
     
@@ -152,19 +171,21 @@ def view_favs():
     current_page = request.args.get('page', 1, type=int)
     num_results = 10
 
-    #query the db
-    user_favs = crud.get_favs_by_user(user_id, current_page, num_results)
-
     #values to pass into the template
     rivers = []
     id_list = []
     cfs_list = []
 
+    #query the db
+    user_favs = crud.get_favs_by_user(user_id, current_page, num_results)
+
     for fav in user_favs.items:
         #get a river from the USGS API using the usgs_id
         usgs_id = fav.river.usgs_id
-        river = get_usgs_inst(usgs_id)
-        
+        river = get_usgs_inst(fav.river)
+        weather = get_weather_api(fav.river)
+        river.update(weather)
+
         #append the river_dict returned from get_usgs_inst to the river list
         rivers.append(river)
 
