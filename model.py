@@ -17,6 +17,7 @@ class River(db.Model):
     usgs_id = db.Column(db.String, nullable=False)
     longitude = db.Column(db.Float, nullable=False)
     latitude = db.Column(db.Float, nullable=False)
+    init_cfs = db.Column(db.String, nullable=False)
     prev_level = db.Column(db.Float, nullable=True)
     prev_rain = db.Column(db.Float, nullable=True)
 

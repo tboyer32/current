@@ -31,7 +31,7 @@ for filename in os.listdir("data"):
         cfs = float(river['values'][0]['value'][0]['value'])
 
         if cfs > 100:
-            river_to_add = crud.create_river(usgs_id, name, longitude, latitude)
+            river_to_add = crud.create_river(usgs_id, name, longitude, latitude, cfs)
             rivers_in_db.append(river_to_add)
 
 model.db.session.add_all(rivers_in_db)

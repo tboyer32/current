@@ -1,7 +1,7 @@
 // TODO: figure out a button to search after map moves.
 // for now use this toggle for testing so we're not sending queries every time we move the map
 let initMap = true; 
-
+let currentMarkers = [];
 //
 // geolocation
 //
@@ -31,10 +31,7 @@ function displayUserCoords(position) {
     });
     map.on('moveend', () => {
         const bounds = map.getBounds();
-        //if(initMap === true){
-            getRivers(bounds);
-            initMap = false;
-        //}
+        getRivers(bounds);
     })
 };
 
@@ -57,12 +54,15 @@ function getRivers(bounds) {
 };
 
 function displayRivers(rivers){
+    currentMarkers.forEach((marker) => marker.remove());
+    
     for (let river in rivers){        
-        new mapboxgl.Marker()
+        const marker = new mapboxgl.Marker()
         .setLngLat([rivers[river]['longitude'], rivers[river]['latitude']])
         .setPopup(new mapboxgl.Popup(
             {closeButton: false})
             .setHTML(`<a href="/river-detail/${rivers[river]['usgs_id']}">${river}</a>`)) 
         .addTo(map)
+        currentMarkers.push(marker);
     }
 }

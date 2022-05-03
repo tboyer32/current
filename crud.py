@@ -3,13 +3,14 @@
 from model import db, River, Fav, User, connect_to_db
 
 
-def create_river(usgs_id, name, longitude, latitude):
+def create_river(usgs_id, name, longitude, latitude, cfs):
     """Create and return a new river."""
 
     river = River(usgs_id = usgs_id,
                   name = name,
                   longitude = longitude,
-                  latitude = latitude)
+                  latitude = latitude,
+                  init_cfs = cfs)
 
     return river
 
@@ -21,7 +22,7 @@ def get_rivers(max_lat, min_lat, max_lng, min_lng):
         (River.latitude < max_lat) 
         & (River.latitude > min_lat) 
         & (River.longitude < max_lng) 
-        & (River.longitude > min_lng)).all()
+        & (River.longitude > min_lng)).order_by(River.init_cfs.desc()).limit(50).all()
 
 
 def get_river_by_usgs_id(usgs_id):
