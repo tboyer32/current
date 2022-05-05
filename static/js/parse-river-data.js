@@ -1,5 +1,3 @@
-//Do we want to run add and delete favorites and the instantaneous values through this object?
-
 const usgsIds = document.querySelector('#parser').getAttribute("data-usgsIds");
 const cfsValues = document.querySelector('#parser').getAttribute("data-cfsValues");
 
@@ -9,25 +7,80 @@ class River {
     this.cfsValue = cfsValue;
     this.data = data;
   }
-  get histMean() {
-    return this.calcHistMean();
+  get histValues() {
+    return this.calcHistValues();
   }
-  calcHistMean() {
+  calcHistValues() {
     //need to update this so it calculates based on an entire column rather than one day
-    const d = new Date();
-    const day = d.getDate();
-    const month = d.getMonth()+1;
-    const today_data = this.data.find(data => data.month_nu == month && data.day_nu == day);
-    
-    //eventually we'll want this for graphing purposes
-    const total_median = d3.median(this.data, d => d.mean_va);
+    let currentTime = new Date();
+    const currentDay = currentTime.getDate();
+    const currentMonth = currentTime.getMonth()+1;
 
-    return today_data.mean_va;
+    //create a new Date object - setting a date that's plus and minus the specified range
+    const getBeginRange = new Date(currentTime.setDate(currentTime.getDate()-14));
+    const getEndRange = new Date(currentTime.setDate(currentTime.getDate()+30));
+
+    const bounds = {
+      startMonth : getBeginRange.getMonth()+1,
+      endMonth : getEndRange.getMonth()+1,
+      startDay : getBeginRange.getDate(),
+      endDay : getEndRange.getDate()
+    }
+
+    //const today_data = this.data.find(data => data.month_nu == month && data.day_nu == day);
+    const seasonalData = this.data.filter((d) => {
+          const past = d.day_nu >= bounds.startDay && d.month_nu == bounds.startMonth;
+          const future = d.day_nu <= bounds.endDay && d.month_nu == bounds.endMonth;
+          return past+future;
+    });
+
+    const seasonalMedian = d3.median(seasonalData, d => d.mean_va);
+    const seasonalTopBound = d3.median(seasonalData, d => d.p75_va);
+
+    //get the total historical median - includes all dates
+    const totalMedian = d3.median(this.data, d => d.mean_va);
+
+    const histValues = {
+      seasonalMedian : seasonalMedian,
+      totalMedian: totalMedian,
+      topBound: seasonalTopBound * 1.25
+    }
+
+    return histValues;
   }
-  dispHistMean() {
-    //looks for an element with an id of #hist{usgsId} and displays the data
-    document.querySelector(`#hist${this.usgsId}`).innerHTML = this.histMean;
-    console.log(this.data)
+  dispTotalMedian() {
+    document.querySelector(`#hist${this.usgsId}`).innerHTML = this.histValues.totalMedian;
+  }
+  displayBarChart() {
+    const height = 300;
+    const width = 400;
+    const currentFlow = this.cfsValue; 
+    const barHeight = height * (currentFlow / this.histValues.topBound);
+    const barWidth = 50;
+    
+    // Find the DOM element with an id of "chart" and set its width and height.
+    // This happens to be an svg element.
+    const svg = d3.select('#chart').attr('width', width).attr('height', height);
+    
+    // Append a group element to the svg and add a CSS class of "bar".
+    const group = svg.append('g').attr('class', 'bar');
+    
+    // Append a rect element to the group and set its properties.
+    // The background color of an SVG element is set using the "fill" property.
+    group
+      .append('rect')
+      .attr('height', barHeight)
+      .attr('width', barWidth)
+      .attr('x', 0)
+      .attr('y', height - barHeight)
+      .attr('fill', 'cornflowerblue');
+    
+    // Append a text element to the group and set its properties.
+    group
+      .append('text')
+      .text(currentFlow)
+      .attr('x', barWidth / 2) // center horizontally in bar
+      .attr('y', height - barHeight + 20); // just below top
   }
 }
 
@@ -37,14 +90,13 @@ function initRivers(usgsIds, cfsValues, data) {
     const riverData = data.filter(function(d){ return d.site_no == usgsIds[i] });
     
     //create a new river object
-    const my_river = new River(usgsIds[i], cfsValues[i], riverData);
+    const myRiver = new River(usgsIds[i], cfsValues[i], riverData);
     
     //display the historical data - eventually this will build the graph.
-    my_river.dispHistMean();
+    myRiver.dispTotalMedian();
+    myRiver.displayBarChart();
   }
 }
-
-//TODO change url to have start date in the last 30 or so years and have an end date of today
 
 //get the usgs historical values for all rivers on page
 fetch(`https://waterservices.usgs.gov/nwis/stat/?format=rdb,1.0&sites=${usgsIds}&statReportType=daily&statTypeCd=mean,max,p25,p50,p75&parameterCd=00060`)
@@ -61,39 +113,3 @@ fetch(`https://waterservices.usgs.gov/nwis/stat/?format=rdb,1.0&sites=${usgsIds}
   });
 
 
-// if the river is unusually high, the bar should be at the top of the chart
-// if the river is average or low where should the top of the chart be?
-// the max value is in general too high. Do we go some percentage over the total historical mean??
-// bar should be percentage of total height, obviously
-// add a marker at mean for this day
-// add a marker at total mean
-
-const HEIGHT = 300;
-const WIDTH = 400;
-const score = 7; // out of 10
-const barHeight = HEIGHT * (score / 10);
-const barWidth = 50;
- 
-// Find the DOM element with an id of "chart" and set its width and height.
-// This happens to be an svg element.
-const svg = d3.select('#chart').attr('width', WIDTH).attr('height', HEIGHT);
- 
-// Append a group element to the svg and add a CSS class of "bar".
-const group = svg.append('g').attr('class', 'bar');
- 
-// Append a rect element to the group and set its properties.
-// The background color of an SVG element is set using the "fill" property.
-group
-  .append('rect')
-  .attr('height', barHeight)
-  .attr('width', barWidth)
-  .attr('x', 0)
-  .attr('y', HEIGHT - barHeight)
-  .attr('fill', 'cornflowerblue');
- 
-// Append a text element to the group and set its properties.
-group
-  .append('text')
-  .text(score)
-  .attr('x', barWidth / 2) // center horizontally in bar
-  .attr('y', HEIGHT - barHeight + 20); // just below top
