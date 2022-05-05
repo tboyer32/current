@@ -5,3 +5,4 @@ secrets.sh
 .DS_Store
 data
 test_data
+static/test-waves.html

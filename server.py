@@ -14,9 +14,14 @@ app.secret_key = "dev"
 app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = True
 
 
+
+# ===========================================================================
+# API Requests
+# ===========================================================================
+
+
 OW_API_KEY = os.environ['OPEN_WEATHER_KEY']
 MB_API_KEY = os.environ['MAPBOX_KEY']
-
 
 def get_usgs_inst(river):
     """query the usgs instantaneous value API"""
@@ -201,6 +206,7 @@ def view_favs():
     cfs_values = ",".join(cfs_list)
 
     #pagination for template
+    #TODO turn into a list
     next_page = False
     prev_page = False
 

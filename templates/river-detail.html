@@ -1,7 +1,9 @@
 {% extends 'base.html' %}
+
 {% block title %}{{ river_data['name'] }}{% endblock %}
 
 {% block body %}
+
 <h1>{{ river_data['name'] }}</h1>
 
     <!-- TODO: check to make sure a value exists before displaying it -->
@@ -14,6 +16,8 @@
     <p id="hist{{river_data['usgs_id']}}"></p>
     <p>weather code: {{weather.condition_id}}</p>
     <p>weather description: {{weather.weather_desc}}</p>
+
+    <svg id="chart"></svg>
 
     {% if session['user_id'] and not fav %}
         <form id="fav" action="/fav-river/{{ river_data['usgs_id']}}" method="POST">
