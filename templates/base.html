@@ -10,7 +10,7 @@
 
     {% block head %}{% endblock %}
   </head>
-  <body>
+  <body {% block body_attributes %}{% endblock %}>
     <nav>
       {% if request.path != '/' %}
         <a href="/">Home</a>

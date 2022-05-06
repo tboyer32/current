@@ -1,5 +1,8 @@
-const usgsIds = document.querySelector('#parser').getAttribute("data-usgsIds");
-const cfsValues = document.querySelector('#parser').getAttribute("data-cfsValues");
+const USGSIDS = document.querySelector('#parser').getAttribute("data-usgsIds");
+const CFSVALUES = document.querySelector('#parser').getAttribute("data-cfsValues");
+const PAGETYPE = document.querySelector('body').getAttribute("class");
+
+console.log(PAGETYPE);
 
 class River {
   constructor(usgsId, cfsValue, data) {
@@ -56,8 +59,10 @@ class River {
     const width = 400;
     const currentFlow = this.cfsValue; 
     const barHeight = height * (currentFlow / this.histValues.topBound);
-    const barWidth = 50;
-    
+    const barWidth = 350;
+    const histMeanPos = height * (this.histValues.totalMedian / this.histValues.topBound)
+    const seasonalMeanPos = height * (this.histValues.seasonalMedian / this.histValues.topBound)
+
     // Find the DOM element with an id of "chart" and set its width and height.
     // This happens to be an svg element.
     const svg = d3.select('#chart').attr('width', width).attr('height', height);
@@ -71,10 +76,28 @@ class River {
       .append('rect')
       .attr('height', barHeight)
       .attr('width', barWidth)
-      .attr('x', 0)
+      .attr('x', 25)
       .attr('y', height - barHeight)
       .attr('fill', 'cornflowerblue');
-    
+
+    group
+      .append('line')
+      .style("stroke", "lightgreen")
+      .style("stroke-width", 4)
+      .attr('x1', 0)
+      .attr('y1', seasonalMeanPos)
+      .attr('x2', width)
+      .attr('y2', seasonalMeanPos);
+
+    group
+      .append('line')
+      .style("stroke", "orange")
+      .style("stroke-width", 4)
+      .attr('x1', 0)
+      .attr('y1', histMeanPos)
+      .attr('x2', width)
+      .attr('y2', histMeanPos);
+
     // Append a text element to the group and set its properties.
     group
       .append('text')
@@ -94,20 +117,23 @@ function initRivers(usgsIds, cfsValues, data) {
     
     //display the historical data - eventually this will build the graph.
     myRiver.dispTotalMedian();
-    myRiver.displayBarChart();
+
+    if (PAGETYPE == 'detail'){
+      myRiver.displayBarChart();
+    }
   }
 }
 
 //get the usgs historical values for all rivers on page
-fetch(`https://waterservices.usgs.gov/nwis/stat/?format=rdb,1.0&sites=${usgsIds}&statReportType=daily&statTypeCd=mean,max,p25,p50,p75&parameterCd=00060`)
+fetch(`https://waterservices.usgs.gov/nwis/stat/?format=rdb,1.0&sites=${USGSIDS}&statReportType=daily&statTypeCd=mean,max,p25,p50,p75&parameterCd=00060`)
   .then(response => response.text())
   .then(responseData => {
     //look for the last # then remove the stupid space that comes after it so I can access the actual data
     const cleanData = responseData.substring(responseData.lastIndexOf("#")+2);
     const data = d3.tsvParse(cleanData);
 
-    const usgsIdArr = usgsIds.split(',');
-    const cfsValuesArr = cfsValues.split(',');
+    const usgsIdArr = USGSIDS.split(',');
+    const cfsValuesArr = CFSVALUES.split(',');
 
     initRivers(usgsIdArr, cfsValuesArr, data)
   });

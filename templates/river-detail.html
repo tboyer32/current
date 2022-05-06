@@ -1,6 +1,16 @@
 {% extends 'base.html' %}
 
+{% block scripts %}
+<style>
+    #chart {
+        background: #ccc;
+    }
+</style>
+{% endblock %}
+
 {% block title %}{{ river_data['name'] }}{% endblock %}
+
+{% block body_attributes %}class="detail"{% endblock %}
 
 {% block body %}
 
