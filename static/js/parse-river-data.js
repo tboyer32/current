@@ -4,6 +4,7 @@ const PAGETYPE = document.querySelector('body').getAttribute("class");
 
 console.log(PAGETYPE);
 
+//TODO change the structure of this so that calcHistValues only has to run once
 class River {
   constructor(usgsId, cfsValue, data) {
     this.usgsId = usgsId;
@@ -39,7 +40,6 @@ class River {
 
     const seasonalMedian = d3.median(seasonalData, d => d.mean_va);
     const seasonalTopBound = d3.median(seasonalData, d => d.p75_va);
-
     //get the total historical median - includes all dates
     const totalMedian = d3.median(this.data, d => d.mean_va);
 
@@ -52,17 +52,27 @@ class River {
     return histValues;
   }
   dispTotalMedian() {
-    document.querySelector(`#hist${this.usgsId}`).innerHTML = this.histValues.totalMedian;
+    document.querySelector(`#hist${this.usgsId}`).innerHTML = `Total Median: ${this.histValues.totalMedian}`;
+    document.querySelector(`#season${this.usgsId}`).innerHTML = `Seasonal Median: ${this.histValues.seasonalMedian}`;
+
   }
   displayBarChart() {
+    let topBound = this.histValues.topBound;
+    if (this.histValues.topBound < this.cfsValue){
+      topBound = this.cfsValue * 1.1; //add 10% to the top to give a little margin
+    }
+
     const height = 300;
     const width = 400;
     const currentFlow = this.cfsValue; 
-    const barHeight = height * (currentFlow / this.histValues.topBound);
+    const barHeight = height * (currentFlow / topBound);
     const barWidth = 350;
-    const histMeanPos = height * (this.histValues.totalMedian / this.histValues.topBound)
-    const seasonalMeanPos = height * (this.histValues.seasonalMedian / this.histValues.topBound)
+    const histMeanPos = height * (this.histValues.totalMedian / topBound);
+    const seasonalMeanPos = height * (this.histValues.seasonalMedian / topBound);
 
+    console.log('current Flow = ' + currentFlow);
+    console.log('topBound = ' + topBound);
+    console.log('barHeight = ' + barHeight);
     // Find the DOM element with an id of "chart" and set its width and height.
     // This happens to be an svg element.
     const svg = d3.select('#chart').attr('width', width).attr('height', height);

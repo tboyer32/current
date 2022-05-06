@@ -29,13 +29,14 @@ def get_usgs_inst(river):
     usgs_id = river.usgs_id
 
     cfs_code = '00060'
-    gage_code = '00065'
-    temp_code = '00010'
+    # gage_code = '00065'
+    # temp_code = '00010'
 
-    param_codes = f"{cfs_code},{gage_code},{temp_code}"
+    # param_codes = f"{cfs_code},{gage_code},{temp_code}"
 
     url = 'https://waterservices.usgs.gov/nwis/iv/?format=json'
-    payload = {'sites': usgs_id, 'parameterCD': param_codes}
+    # payload = {'sites': usgs_id, 'parameterCD': param_codes}
+    payload = {'sites' : usgs_id, 'parameterCD' : cfs_code}
 
     response = requests.get(url, params=payload)
     river_data = response.json()
@@ -54,10 +55,10 @@ def get_usgs_inst(river):
 
         if var_code == cfs_code:
             river_dict['cfs'] = param['values'][0]['value'][0]['value']
-        elif var_code == gage_code:
-            river_dict['gage_height'] = param['values'][0]['value'][0]['value']
-        elif var_code == temp_code:
-            river_dict['temp'] = param['values'][0]['value'][0]['value']
+        # elif var_code == gage_code:
+        #     river_dict['gage_height'] = param['values'][0]['value'][0]['value']
+        # elif var_code == temp_code:
+        #     river_dict['temp'] = param['values'][0]['value'][0]['value']
 
     return river_dict
 
@@ -165,10 +166,6 @@ def unfav_river(usgs_id):
 @app.route('/view-favs', methods=['GET'])
 def view_favs():
     """View favorite rivers"""
-
-    #TODO
-    #if the river has been favorited for more than one day show the change in river level since yesterday
-    #opt in to notifications
 
     user_id = request.args.get('user-id')
     

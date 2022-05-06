@@ -11,6 +11,7 @@
         <ul>
             <li>{{river.cfs}}</li>
             <li id="hist{{river.usgs_id}}"></li>
+            <li id="season{{river.usgs_id}}"></li>
             <li>{{river.weather_desc}}</li>
         </ul>
         <form id="fav{{river.usgs_id}}" action="/unfav-river/{{ river.usgs_id }}" method="POST">
