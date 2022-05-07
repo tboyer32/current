@@ -64,45 +64,6 @@ def homepage():
     return render_template('homepage.html', mb_key=MB_API_KEY)
 
 
-@app.route('/locate-rivers.json') 
-def locate_rivers():
-    """return locations of nearby rivers"""
-
-    max_lat = float(request.args.get('maxLat'))
-    min_lat = float(request.args.get('minLat'))
-    max_lng = float(request.args.get('maxLng'))
-    min_lng = float(request.args.get('minLng'))
-
-    locations = {}
-
-    river_results = crud.get_rivers(max_lat, min_lat, max_lng, min_lng)
-
-    for river in river_results:
-        locations[river.name] = {'usgs_id': river.usgs_id, 'latitude': river.latitude, 'longitude': river.longitude}
-
-    return jsonify(locations)
-
-
-@app.route('/weather.json')
-def get_weather():
-
-    usgs_id = request.args.get('usgs-id')
-    river = crud.get_river_by_usgs_id(usgs_id)
-
-    url = 'https://api.openweathermap.org/data/2.5/weather'
-    payload = {'lat': river.latitude, 'lon': river.longitude, 'appid': OW_API_KEY}
-
-    response = requests.get(url, params=payload)
-    weather_data = response.json()
-
-    weather = {
-        'condition_id' : weather_data['weather'][0]['id'],
-        'weather_desc' : weather_data['weather'][0]['description']
-    }
-
-    return jsonify(weather)
-
-
 @app.route('/river-detail/<usgs_id>')
 def river_detail(usgs_id):
     """Show a river detail page."""
@@ -129,40 +90,6 @@ def river_detail(usgs_id):
         fav = False
 
     return render_template('river-detail.html', river_data=river_data, fav=fav)
-
-
-@app.route('/fav-river/<usgs_id>', methods=["POST"])
-def fav_river(usgs_id):
-    """Add a river to favorites"""
-
-    user_id = session.get('user_id', False)
-    river_id = request.form.get('river_id')
-    
-    fav = crud.create_fav(user_id, river_id)
-
-    db.session.add(fav)
-    db.session.commit()
-
-    flash(f"River saved!")
-
-    return redirect(request.referrer)
-
-
-@app.route('/unfav-river/<usgs_id>', methods=["POST"])
-def unfav_river(usgs_id):
-    """Remove a river from favorites"""
-
-    user_id = session.get('user_id', False)
-    river_id = request.form.get('river_id')
-    
-    fav = crud.get_fav(user_id, river_id)
-
-    db.session.delete(fav)
-    db.session.commit()
-
-    flash(f"River unsaved!")
-
-    return redirect(request.referrer)
 
 
 @app.route('/view-favs', methods=['GET'])
@@ -220,6 +147,11 @@ def view_favs():
 
     return render_template('favorites.html', rivers=rivers, usgs_ids=usgs_ids, cfs_values=cfs_values, 
                             prev_page=prev_page, next_page=next_page, user_id=user_id)
+
+
+# ===========================================================================
+# FORMS
+# ===========================================================================
 
 
 @app.route('/create-account')
@@ -280,6 +212,85 @@ def user_logout():
     flash('You have been logged out!')
 
     return redirect('/')
+
+
+@app.route('/fav-river/<usgs_id>', methods=["POST"])
+def fav_river(usgs_id):
+    """Add a river to favorites"""
+
+    user_id = session.get('user_id', False)
+    river_id = request.form.get('river_id')
+    
+    ######TODO Need to check if this user already has this river faved before adding it to the db
+    fav = crud.create_fav(user_id, river_id)
+
+    db.session.add(fav)
+    db.session.commit()
+
+    flash(f"River saved!")
+
+    return redirect(request.referrer)
+
+
+@app.route('/unfav-river/<usgs_id>', methods=["POST"])
+def unfav_river(usgs_id):
+    """Remove a river from favorites"""
+
+    user_id = session.get('user_id', False)
+    river_id = request.form.get('river_id')
+    
+    fav = crud.get_fav(user_id, river_id)
+
+    db.session.delete(fav)
+    db.session.commit()
+
+    flash(f"River unsaved!")
+
+    return redirect(request.referrer)
+
+
+# ===========================================================================
+# JSON RESPONSES
+# ===========================================================================
+
+
+@app.route('/locate-rivers.json') 
+def locate_rivers():
+    """return locations of nearby rivers"""
+
+    max_lat = float(request.args.get('maxLat'))
+    min_lat = float(request.args.get('minLat'))
+    max_lng = float(request.args.get('maxLng'))
+    min_lng = float(request.args.get('minLng'))
+
+    locations = {}
+
+    river_results = crud.get_rivers(max_lat, min_lat, max_lng, min_lng)
+
+    for river in river_results:
+        locations[river.name] = {'usgs_id': river.usgs_id, 'latitude': river.latitude, 'longitude': river.longitude}
+
+    return jsonify(locations)
+
+
+@app.route('/weather.json')
+def get_weather():
+
+    usgs_id = request.args.get('usgs-id')
+    river = crud.get_river_by_usgs_id(usgs_id)
+
+    url = 'https://api.openweathermap.org/data/2.5/weather'
+    payload = {'lat': river.latitude, 'lon': river.longitude, 'appid': OW_API_KEY}
+
+    response = requests.get(url, params=payload)
+    weather_data = response.json()
+
+    weather = {
+        'condition_id' : weather_data['weather'][0]['id'],
+        'weather_desc' : weather_data['weather'][0]['description']
+    }
+
+    return jsonify(weather)
 
 
 if __name__ == '__main__':

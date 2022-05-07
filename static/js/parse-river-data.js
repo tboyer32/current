@@ -17,8 +17,6 @@ class River {
   calcHistValues() {
     //need to update this so it calculates based on an entire column rather than one day
     let currentTime = new Date();
-    const currentDay = currentTime.getDate();
-    const currentMonth = currentTime.getMonth()+1;
 
     //create a new Date object - setting a date that's plus and minus the specified range
     const getBeginRange = new Date(currentTime.setDate(currentTime.getDate()-14));
@@ -72,11 +70,11 @@ class River {
     console.log('current Flow = ' + currentFlow);
     console.log('topBound = ' + topBound);
     console.log('barHeight = ' + barHeight);
+
     // Find the DOM element with an id of "chart" and set its width and height.
-    // This happens to be an svg element.
     const svg = d3.select('#chart').attr('width', width).attr('height', height);
     
-    // Append a group element to the svg and add a CSS class of "bar".
+    // Append a group element to the svg and add a class of "bar".
     const group = svg.append('g').attr('class', 'bar');
     
     // Append a rect element to the group and set its properties.
@@ -120,7 +118,7 @@ class River {
     .then(responseData => {
         console.log(responseData);
         document.querySelector(`#id${this.usgsId} .weather`)
-        .innerHTML = `Weather: ${responseData}`;
+        .innerHTML = `Weather: ${responseData.weather_desc}`;
     });
   }
 }
