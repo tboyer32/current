@@ -40,7 +40,7 @@ class River {
 
     const seasonalMedian = d3.median(seasonalData, d => d.mean_va);
     const seasonalTopBound = d3.median(seasonalData, d => d.p75_va);
-    //get the total historical median - includes all dates
+    //get the total historical median - includes all available dates
     const totalMedian = d3.median(this.data, d => d.mean_va);
 
     const histValues = {
@@ -52,11 +52,10 @@ class River {
     return histValues;
   }
   dispTotalMedian() {
-    document.querySelector(`#hist${this.usgsId}`).innerHTML = `Total Median: ${this.histValues.totalMedian}`;
-    document.querySelector(`#season${this.usgsId}`).innerHTML = `Seasonal Median: ${this.histValues.seasonalMedian}`;
-
+    document.querySelector(`#id${this.usgsId} .history`).innerHTML = `Total Median: ${this.histValues.totalMedian}`;
+    document.querySelector(`#id${this.usgsId} .seasonal`).innerHTML = `Seasonal Median: ${this.histValues.seasonalMedian}`;
   }
-  displayBarChart() {
+  dispBarChart() {
     let topBound = this.histValues.topBound;
     if (this.histValues.topBound < this.cfsValue){
       topBound = this.cfsValue * 1.1; //add 10% to the top to give a little margin
@@ -115,6 +114,15 @@ class River {
       .attr('x', barWidth / 2) // center horizontally in bar
       .attr('y', height - barHeight + 20); // just below top
   }
+  dispWeather() {
+    fetch(`/weather.json?usgs-id=${this.usgsId}`)
+    .then(response => response.json())
+    .then(responseData => {
+        console.log(responseData);
+        document.querySelector(`#id${this.usgsId} .weather`)
+        .innerHTML = `Weather: ${responseData}`;
+    });
+  }
 }
 
 function initRivers(usgsIds, cfsValues, data) {
@@ -127,9 +135,10 @@ function initRivers(usgsIds, cfsValues, data) {
     
     //display the historical data - eventually this will build the graph.
     myRiver.dispTotalMedian();
+    myRiver.dispWeather();
 
     if (PAGETYPE == 'detail'){
-      myRiver.displayBarChart();
+      myRiver.dispBarChart();
     }
   }
 }
@@ -147,5 +156,6 @@ fetch(`https://waterservices.usgs.gov/nwis/stat/?format=rdb,1.0&sites=${USGSIDS}
 
     initRivers(usgsIdArr, cfsValuesArr, data)
   });
+
 
 

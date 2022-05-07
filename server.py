@@ -23,61 +23,34 @@ app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = True
 OW_API_KEY = os.environ['OPEN_WEATHER_KEY']
 MB_API_KEY = os.environ['MAPBOX_KEY']
 
-def get_usgs_inst(river):
+
+def get_usgs_inst(usgs_ids, river_list):
     """query the usgs instantaneous value API"""
 
-    usgs_id = river.usgs_id
-
-    cfs_code = '00060'
-    # gage_code = '00065'
-    # temp_code = '00010'
-
-    # param_codes = f"{cfs_code},{gage_code},{temp_code}"
-
     url = 'https://waterservices.usgs.gov/nwis/iv/?format=json'
-    # payload = {'sites': usgs_id, 'parameterCD': param_codes}
-    payload = {'sites' : usgs_id, 'parameterCD' : cfs_code}
+    payload = {'sites' : usgs_ids, 'parameterCD' : '00060'}
 
     response = requests.get(url, params=payload)
     river_data = response.json()
 
-    timeSeries = river_data['value']['timeSeries']
-    river_name = timeSeries[0]["sourceInfo"]["siteName"]
+    #process response from API
+    cfs_list = []
 
-    river_dict = {
-        'name' : river_name,
-        'usgs_id' : usgs_id,
-        'river_id' : river.river_id
-    }
+    timeSeries = river_data['value']['timeSeries']
 
     for param in timeSeries:
-        var_code = param['variable']['variableCode'][0]['value']
+        cfs_dict = {
+            'usgs_id': param['sourceInfo']['siteCode'][0]['value'],
+            'cfs': param['values'][0]['value'][0]['value']
+        }
+        cfs_list.append(cfs_dict)
 
-        if var_code == cfs_code:
-            river_dict['cfs'] = param['values'][0]['value'][0]['value']
-        # elif var_code == gage_code:
-        #     river_dict['gage_height'] = param['values'][0]['value'][0]['value']
-        # elif var_code == temp_code:
-        #     river_dict['temp'] = param['values'][0]['value'][0]['value']
+    for river in river_list:
+        for cfs in cfs_list:
+            if river['usgs_id'] == cfs['usgs_id']:
+                river.update(cfs)
 
-    return river_dict
-
-
-def get_weather_api(river):
-    """get data from the open weather map api"""
-
-    url = 'https://api.openweathermap.org/data/2.5/weather'
-    payload = {'lat': river.latitude, 'lon': river.longitude, 'appid': OW_API_KEY}
-
-    response = requests.get(url, params=payload)
-    weather_data = response.json()
-
-    weather = {
-        'condition_id' : weather_data['weather'][0]['id'],
-        'weather_desc' : weather_data['weather'][0]['description']
-    }
-
-    return weather
+    return river_list
 
 
 # ===========================================================================
@@ -110,13 +83,42 @@ def locate_rivers():
     return jsonify(locations)
 
 
+@app.route('/weather.json')
+def get_weather():
+
+    usgs_id = request.args.get('usgs-id')
+    river = crud.get_river_by_usgs_id(usgs_id)
+
+    url = 'https://api.openweathermap.org/data/2.5/weather'
+    payload = {'lat': river.latitude, 'lon': river.longitude, 'appid': OW_API_KEY}
+
+    response = requests.get(url, params=payload)
+    weather_data = response.json()
+
+    weather = {
+        'condition_id' : weather_data['weather'][0]['id'],
+        'weather_desc' : weather_data['weather'][0]['description']
+    }
+
+    return jsonify(weather)
+
+
 @app.route('/river-detail/<usgs_id>')
 def river_detail(usgs_id):
     """Show a river detail page."""
 
     river = crud.get_river_by_usgs_id(usgs_id)
-    river_data = get_usgs_inst(river)
-    weather = get_weather_api(river)
+
+    river_dict = {
+        'name' : river.name,
+        'usgs_id' : river.usgs_id,
+        'river_id' : river.river_id
+    }
+    
+    #call the apis
+    river_list = [river_dict]
+
+    river_data = get_usgs_inst(river_dict['usgs_id'], river_list)[0]
 
     #handle favorites
     user_id = session.get('user_id', False)
@@ -126,7 +128,7 @@ def river_detail(usgs_id):
     else:
         fav = False
 
-    return render_template('river-detail.html', river_data=river_data, fav=fav, weather=weather)
+    return render_template('river-detail.html', river_data=river_data, fav=fav)
 
 
 @app.route('/fav-river/<usgs_id>', methods=["POST"])
@@ -168,38 +170,42 @@ def view_favs():
     """View favorite rivers"""
 
     user_id = request.args.get('user-id')
-    
-    #values to pass in to crud to handle pagination
+
+    #values used to query the API
+    usgs_id_list = []
+    river_list = []
+
+    #query the db
     current_page = request.args.get('page', 1, type=int)
     num_results = 10
 
-    #values to pass into the template
-    rivers = []
-    id_list = []
-    cfs_list = []
-
-    #query the db
     user_favs = crud.get_favs_by_user(user_id, current_page, num_results)
 
+    #process info from the db
     for fav in user_favs.items:
-        #get a river from the USGS API using the usgs_id
-        usgs_id = fav.river.usgs_id
-        river = get_usgs_inst(fav.river)
-        weather = get_weather_api(fav.river)
-        river.update(weather)
+        river_dict = {}
+        river_dict['name'] = fav.river.name
+        river_dict['usgs_id'] = fav.river.usgs_id
+        river_dict['river_id'] = fav.river.river_id
 
-        #append the river_dict returned from get_usgs_inst to the river list
-        rivers.append(river)
+        #NEED TO MOVE WEATHER CALL TO FRONT END TO SPEED UP REQUEST
+        # weather = get_weather_api(fav.river)
+        # river_dict.update(weather)
 
-        #append the usgs_id to the id list so that we can turn it into a string for the front end
-        id_list.append(usgs_id)
+        river_list.append(river_dict)
+        usgs_id_list.append(fav.river.usgs_id)
 
-        #get the cfs values from the river dict and add it to a list so we can format it for the front end
+    #query the API
+    usgs_ids = ",".join(usgs_id_list)
+    rivers = get_usgs_inst(usgs_ids, river_list)
+
+    #cfs values to pass into the template
+    cfs_list = []
+
+    for river in rivers:
         cfs = river.get('cfs', 0)
         cfs_list.append(cfs)
 
-    #format the lists into comma separated strings for js purposes
-    usgs_ids = ",".join(id_list)
     cfs_values = ",".join(cfs_list)
 
     #pagination for template

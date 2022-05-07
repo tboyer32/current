@@ -17,19 +17,19 @@
 <h1>{{ river_data['name'] }}</h1>
 
     <!-- TODO: check to make sure a value exists before displaying it -->
-
-    <p>current flow: <b>{{ river_data['cfs'] }} cfs</b></p>
-    {% if river_data['gage_height'] %}
-        <p>current gage height: <b>{{ river_data['gage_height'] }} ft</b></p>
-    {% endif %}
-    {% if river_data['temp'] %}
-        <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>
-    {% endif %}
-    <p id="hist{{river_data['usgs_id']}}"></p>
-    <p id="season{{river_data['usgs_id']}}"></p>
-    <p>weather code: {{weather.condition_id}}</p>
-    <p>weather description: {{weather.weather_desc}}</p>
-
+    <section id="id{{river_data['usgs_id']}}">
+        <p>current flow: <b>{{ river_data['cfs'] }} cfs</b></p>
+        {% if river_data['gage_height'] %}
+            <p>current gage height: <b>{{ river_data['gage_height'] }} ft</b></p>
+        {% endif %}
+        {% if river_data['temp'] %}
+            <p>current temp (C): <b>{{ river_data['temp'] }}</b></p>
+        {% endif %}
+        <p class="history"></p>
+        <p class="seasonal"></p>
+        <p class="weather"></p>
+    </section>
+    
     <svg id="chart"></svg>
 
     {% if session['user_id'] and not fav %}

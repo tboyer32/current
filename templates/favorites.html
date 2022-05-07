@@ -7,12 +7,12 @@
 <dl>
 {% for river in rivers %}
     <dt><a href="/river-detail/{{river.usgs_id}}">{{ river.name }}</a></dt>
-    <dd>
+    <dd id="id{{river.usgs_id}}">
         <ul>
             <li>{{river.cfs}}</li>
-            <li id="hist{{river.usgs_id}}"></li>
-            <li id="season{{river.usgs_id}}"></li>
-            <li>{{river.weather_desc}}</li>
+            <li class="history"></li>
+            <li class="seasonal"></li>
+            <li class="weather"></li>
         </ul>
         <form id="fav{{river.usgs_id}}" action="/unfav-river/{{ river.usgs_id }}" method="POST">
             <input type="hidden" name="river_id" value="{{ river.river_id }}">
