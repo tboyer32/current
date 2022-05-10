@@ -96,6 +96,8 @@ def river_detail(usgs_id):
 def view_favs():
     """View favorite rivers"""
 
+    #TODO check if the user is logged in before displaying information
+
     user_id = request.args.get('user-id')
 
     #values used to query the API
@@ -200,12 +202,14 @@ def user_login():
     else:
         flash('Login unsuccesful!')
 
-    return redirect('/')
+    return redirect('request.referrer')
 
 
 @app.route('/logout', methods=["POST"])
 def user_logout():
     """Log the user out"""
+
+    #TODO only redirect user if they're on the favorites page
 
     session.pop('user_id')
     
@@ -221,7 +225,6 @@ def fav_river(usgs_id):
     user_id = session.get('user_id', False)
     river_id = request.form.get('river_id')
     
-    ######TODO Need to check if this user already has this river faved before adding it to the db
     fav = crud.create_fav(user_id, river_id)
 
     db.session.add(fav)
