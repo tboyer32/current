@@ -1,6 +1,3 @@
-// TODO: figure out a button to search after map moves.
-// for now use this toggle for testing so we're not sending queries every time we move the map
-let initMap = true; 
 let currentMarkers = [];
 //
 // geolocation

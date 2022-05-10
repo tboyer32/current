@@ -16,7 +16,6 @@
 
 <h1>{{ river_data['name'] }}</h1>
 
-    <!-- TODO: check to make sure a value exists before displaying it -->
     <section id="id{{river_data['usgs_id']}}">
         <p>current flow: <b>{{ river_data['cfs'] }} cfs</b></p>
         {% if river_data['gage_height'] %}

@@ -2,8 +2,6 @@ const USGSIDS = document.querySelector('#parser').getAttribute("data-usgsIds");
 const CFSVALUES = document.querySelector('#parser').getAttribute("data-cfsValues");
 const PAGETYPE = document.querySelector('body').getAttribute("class");
 
-console.log(PAGETYPE);
-
 //TODO change the structure of this so that calcHistValues only has to run once
 class River {
   constructor(usgsId, cfsValue, data) {
@@ -67,10 +65,6 @@ class River {
     const histMeanPos = height * (this.histValues.totalMedian / topBound);
     const seasonalMeanPos = height * (this.histValues.seasonalMedian / topBound);
 
-    console.log('current Flow = ' + currentFlow);
-    console.log('topBound = ' + topBound);
-    console.log('barHeight = ' + barHeight);
-
     // Find the DOM element with an id of "chart" and set its width and height.
     const svg = d3.select('#chart').attr('width', width).attr('height', height);
     
@@ -116,7 +110,6 @@ class River {
     fetch(`/weather.json?usgs-id=${this.usgsId}`)
     .then(response => response.json())
     .then(responseData => {
-        console.log(responseData);
         document.querySelector(`#id${this.usgsId} .weather`)
         .innerHTML = `Weather: ${responseData.weather_desc}`;
     });
