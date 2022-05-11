@@ -2,6 +2,7 @@ from flask import (Flask, render_template, request, flash, session, redirect, js
 
 import os
 import requests
+import jwt
 
 from model import connect_to_db, db
 import crud
@@ -12,6 +13,41 @@ app.secret_key = "dev"
 # This configuration is for Flask interactive debugger
 # TODO REMOVE IN PRODUCTION
 app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = True
+
+
+# decorator for verifying the JWT
+def token_required(f):
+    @wraps(f)
+    def decorated(*args, **kwargs):
+        token = None
+
+        # jwt is passed in the request header
+        if 'x-access-token' in request.headers:
+            token = request.headers['x-access-token']
+
+        # return 401 if token is not passed
+        if not token:
+            return ({'message' : 'Token is missing !!'}), 401
+  
+        try:
+            # decoding the payload to fetch the stored details
+            data = jwt.decode(token, app.config['SECRET_KEY'])
+
+            ##########!!!!!!!!TODO Change this to match my model/crud queries!!!!!###############
+            current_user = User.query\
+                .filter_by(public_id = data['public_id'])\
+                .first()
+
+        except:
+            return ({
+                'message' : 'Token is invalid !!'
+            }), 401
+
+        # returns the current logged in users contex to the routes
+        return  f(current_user, *args, **kwargs)
+  
+    return decorated
+
 
 
 
