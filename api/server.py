@@ -256,6 +256,12 @@ def unfav_river(usgs_id):
 # JSON RESPONSES
 # ===========================================================================
 
+@app.route('/test')
+def test():
+    """just testing react"""
+
+    return {"message" : "Hello World"}
+
 
 @app.route('/locate-rivers.json') 
 def locate_rivers():
