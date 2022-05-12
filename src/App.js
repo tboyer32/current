@@ -19,7 +19,8 @@ function App() {
         <Routes>
           <Route index element={<Home />} />
           <Route path="home" element={<Home />} />
-          <Route path="detail" element={<Detail />} />
+          <Route path="detail" />
+            <Route path=":id" element={<Detail />} />
           <Route path="favorites" element={<Favorites />} />
           <Route path="create-account" element={<CreateAccount />} />
         </Routes>

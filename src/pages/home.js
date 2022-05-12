@@ -1,8 +1,9 @@
 import React, { useRef, useState, useEffect } from 'react';
+import { Routes, Route, Link } from 'react-router-dom';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
  
-mapboxgl.accessToken = ""
+mapboxgl.accessToken = "pk.eyJ1IjoidGJveWVyMzIiLCJhIjoiY2wyODVveWxuMDY3NzNrcGVxN3k3OWF0eCJ9.Cli_pZ5QcWNpbVSKG_0NiQ"
 
 export default function Home() {
   
@@ -63,7 +64,7 @@ export default function Home() {
         .setPopup(new mapboxgl.Popup(
             {closeButton: false})
             ///////*********change this to pass a usgs_id prop instead***********/
-            .setHTML(`<a href="/river-detail/${rivers[river]['usgs_id']}">${river}</a>`)) 
+            .setHTML(`<a href="/river-detail/?id=${rivers[river]['usgs_id']}">${river}</a>`)) 
         .addTo(map.current)
         currentMarkers.push(marker);
     }
@@ -72,20 +73,20 @@ export default function Home() {
   useEffect(() => {
     if (map.current) return; // initialize map only once
       map.current = new mapboxgl.Map({
-      container: mapContainer.current,
-      style: 'mapbox://styles/mapbox/outdoors-v11',
-      center: [lng, lat],
-      zoom: zoom
-    });
+        container: mapContainer.current,
+        style: 'mapbox://styles/mapbox/outdoors-v11',
+        center: [lng, lat],
+        zoom: zoom
+      });
   });
 
   useEffect(() => {
     if (!map.current) return; // wait for map to initialize
-      map.current.on('moveend', () => {
-        const bounds = map.current.getBounds();
-        getRivers(bounds);
-      });
+    map.current.on('moveend', () => {
+      const bounds = map.current.getBounds();
+      getRivers(bounds);
     });
+  });
 
   return (
     <>
