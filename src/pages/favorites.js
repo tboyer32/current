@@ -1,10 +1,18 @@
 import React from 'react';
+import AuthContext from '../components/AuthContext';
 
 export default function Favorites() {
-  return (
+  const {token} = React.useContext(AuthContext);
+  if(token) {
+    return (
+      <main>
+        <h3>Favorites</h3>
+        <p>Logged in</p>
+      </main>
+    );
+  } else {
     <main>
-      <h3>Favorites</h3>
-      <p> This is the favorites page</p>
+      <p>Log in to see favorites</p>
     </main>
-  );
+  }
 };
