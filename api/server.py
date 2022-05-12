@@ -1,19 +1,21 @@
-from flask import (Flask, render_template, request, flash, session, redirect, jsonify)
+from flask import (Flask, render_template, request, flash, session, redirect, jsonify, make_response)
 
 import os
 import requests
 import jwt
+from datetime import datetime, timedelta
+from functools import wraps
 
 from model import connect_to_db, db
 import crud
 
 app = Flask(__name__)
-app.secret_key = "dev"
+#app.secret_key = "dev"
 
 # This configuration is for Flask interactive debugger
 # TODO REMOVE IN PRODUCTION
 app.config['PRESERVE_CONTEXT_ON_EXCEPTION'] = True
-
+app.config['SECRET_KEY'] = "dev"
 
 # decorator for verifying the JWT
 def token_required(f):
@@ -33,10 +35,7 @@ def token_required(f):
             # decoding the payload to fetch the stored details
             data = jwt.decode(token, app.config['SECRET_KEY'])
 
-            ##########!!!!!!!!TODO Change this to match my model/crud queries!!!!!###############
-            current_user = User.query\
-                .filter_by(public_id = data['public_id'])\
-                .first()
+            user_id = data['public_id']
 
         except:
             return ({
@@ -47,6 +46,8 @@ def token_required(f):
         return  f(current_user, *args, **kwargs)
   
     return decorated
+
+
 
 
 
@@ -209,7 +210,7 @@ def register_user():
     password = request.form.get('password')
 
     if (crud.get_user_by_email(email)):
-        flash('User already exists')
+        return make_response('User already exists. Please Log in.', 202)
     else:
         user = crud.create_user(username, email, phone, password)
         db.session.add(user)
@@ -218,29 +219,38 @@ def register_user():
         user_id = user.user_id
         session['user_id'] = user_id
 
-        flash('Account created successfully')
-
-    return redirect('/')
+        return make_response('Successfully registered.', 201)
 
 
-@app.route('/login', methods=["POST"])
-def user_login():
-    """Verify user login"""
+@app.route('/login', methods =['POST'])
+def login():
 
-    email = request.form.get('email')
-    password = request.form.get('password')
+    email = request.json.get('email', 0)
+    password = request.json.get('password', 0)
 
     verified_user = crud.verify_user(email, password)
-
-    if verified_user:
-        session['user_id'] = verified_user.user_id
-        flash("Logged in!")
+  
+    if not verified_user:
+        # returns 401 if user does not exist
+        #######TODO Return something more user friendly#########
+        return make_response(
+            'Could not verify',
+            403,
+            {'WWW-Authenticate' : 'Wrong Username or Password!"'}
+        )
     else:
-        flash('Login unsuccesful!')
+        # generates the JWT Token
+        dt = datetime.now() + timedelta(days=60)
+        token = jwt.encode({
+            'public_id': verified_user.user_id,
+            'exp' : dt.utcfromtimestamp(dt.timestamp())
+        }, app.config['SECRET_KEY'])
+  
+        return make_response(jsonify({'token' : token}), 201)
+    # returns 403 if password is wrong
 
-    return redirect('request.referrer')
 
-
+#######I THINK LOGOUT WILL HAPPEN ON THE FRONT END NOW#######
 @app.route('/logout', methods=["POST"])
 def user_logout():
     """Log the user out"""
