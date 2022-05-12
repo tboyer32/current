@@ -101,9 +101,9 @@ def homepage():
     return render_template('homepage.html', mb_key=MB_API_KEY)
 
 
-@app.route('/river-detail/<usgs_id>')
+@app.route('/river-info/<usgs_id>')
 def river_detail(usgs_id):
-    """Show a river detail page."""
+    """Send info for river detail"""
 
     river = crud.get_river_by_usgs_id(usgs_id)
 
@@ -119,14 +119,14 @@ def river_detail(usgs_id):
     river_data = get_usgs_inst(river_dict['usgs_id'], river_list)[0]
 
     #handle favorites
-    user_id = session.get('user_id', False)
+    # user_id = session.get('user_id', False)
 
-    if(user_id):
-        fav = crud.get_fav(user_id, river_data['river_id'])
-    else:
-        fav = False
+    # if(user_id):
+    #     fav = crud.get_fav(user_id, river_data['river_id'])
+    # else:
+    #     fav = False
 
-    return render_template('river-detail.html', river_data=river_data, fav=fav)
+    return river_data
 
 
 @app.route('/view-favs', methods=['GET'])
