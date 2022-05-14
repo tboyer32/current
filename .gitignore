@@ -27,3 +27,6 @@ yarn-error.log*
 /api/data
 /api/env
 /api/__pycache__
+
+
+src/pages/home.js

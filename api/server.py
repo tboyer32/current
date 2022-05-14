@@ -101,19 +101,22 @@ def homepage():
     return render_template('homepage.html', mb_key=MB_API_KEY)
 
 
+#Rename to match front end
 @app.route('/river-info/<usgs_id>')
-def river_detail(usgs_id):
+def river_info(usgs_id):
     """Send info for river detail"""
-
+    
     river = crud.get_river_by_usgs_id(usgs_id)
 
     river_dict = {
         'name' : river.name,
         'usgs_id' : river.usgs_id,
-        'river_id' : river.river_id
+        'river_id' : river.river_id,
+        'latitude' : river.latitude,
+        'longitude' : river.longitude
     }
     
-    #call the apis
+    #call the external apis
     river_list = [river_dict]
 
     river_data = get_usgs_inst(river_dict['usgs_id'], river_list)[0]
@@ -331,11 +334,11 @@ def locate_rivers():
 @app.route('/weather.json')
 def get_weather():
 
-    usgs_id = request.args.get('usgs-id')
-    river = crud.get_river_by_usgs_id(usgs_id)
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
 
     url = 'https://api.openweathermap.org/data/2.5/weather'
-    payload = {'lat': river.latitude, 'lon': river.longitude, 'appid': OW_API_KEY}
+    payload = {'lat': lat, 'lon': lon, 'appid': OW_API_KEY}
 
     response = requests.get(url, params=payload)
     weather_data = response.json()

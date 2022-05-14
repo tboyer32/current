@@ -10,12 +10,12 @@ const LoginOutForm = (props) => {
     const passwordRef = React.useRef();
     
     const handleSubmit = e => {
-          e.preventDefault();
-          const data = {
-              email: emailRef.current.value,
-              password: passwordRef.current.value
-          };
-          onLogin(data);
+      e.preventDefault();
+      const data = {
+          email: emailRef.current.value,
+          password: passwordRef.current.value
+      };
+      onLogin(data);
     };
   
     if(token){
