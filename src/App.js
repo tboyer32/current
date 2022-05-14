@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import { Routes, Route} from 'react-router-dom';
 import Navigation from './components/Navigation';
 import LoginOutForm from './components/LoginOutForm';
@@ -9,9 +9,10 @@ import CreateAccount from './pages/create-account';
 import AuthProvider from './components/AuthProvider';
 
 import './App.css';
+const SampleContext = React.createContext()  //add this to USGSDataProvider
 
 function App() {
-  
+
   return (
     <>
       <AuthProvider>
