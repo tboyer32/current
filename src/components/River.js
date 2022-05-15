@@ -56,17 +56,23 @@ const River = (props) => {
         'topBound': seasonalTopBound * 1.25
     }
     
+    const url = `/river-detail/?id=${usgsId}`
+
     //TODO: if detail render chart. If fav don't render chart
     if(pageType === 'detail'){
         return (
             <>
+                <h3>{river['name']}</h3>
+                <p>CFS: {river['cfs']}</p>
                 <Weather river={river} />
                 <RiverChart river={river} />
             </>
         )
     }else if(pageType === 'favorite') {
         return (
-            <>
+            <> 
+                <h3><a href={url}>{river['name']}</a></h3>
+                <p>CFS: {river['cfs']}</p>
                 <Weather river={river} />
             </>
         )

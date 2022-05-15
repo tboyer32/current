@@ -24,7 +24,6 @@ export default function Detail(props) {
 
   return (
     <main>
-      <h3>River Detail View</h3>
       <USGSDataProvider usgsIds={[usgsId]}>
         <River values={values} >
           <Weather />
