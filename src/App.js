@@ -9,7 +9,6 @@ import CreateAccount from './pages/create-account';
 import AuthProvider from './components/AuthProvider';
 
 import './App.css';
-const SampleContext = React.createContext()  //add this to USGSDataProvider
 
 function App() {
 

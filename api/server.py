@@ -24,8 +24,8 @@ def token_required(f):
         token = None
 
         # jwt is passed in the request header
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
+        if 'token' in request.headers:
+            token = request.headers['token']
 
         # return 401 if token is not passed
         if not token:
@@ -33,8 +33,7 @@ def token_required(f):
   
         try:
             # decoding the payload to fetch the stored details
-            data = jwt.decode(token, app.config['SECRET_KEY'])
-
+            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
             user_id = data['public_id']
 
         except:
@@ -43,7 +42,7 @@ def token_required(f):
             }), 401
 
         # returns the current logged in users contex to the routes
-        return  f(current_user, *args, **kwargs)
+        return  f(user_id, *args, **kwargs)
   
     return decorated
 
@@ -91,107 +90,6 @@ def get_usgs_inst(usgs_ids, river_list):
 
 
 # ===========================================================================
-# ROUTES
-# ===========================================================================
-
-@app.route('/')
-def homepage():
-    """Show homepage."""
-
-    return render_template('homepage.html', mb_key=MB_API_KEY)
-
-
-#Rename to match front end
-@app.route('/river-info/<usgs_id>')
-def river_info(usgs_id):
-    """Send info for river detail"""
-    
-    river = crud.get_river_by_usgs_id(usgs_id)
-
-    river_dict = {
-        'name' : river.name,
-        'usgs_id' : river.usgs_id,
-        'river_id' : river.river_id,
-        'latitude' : river.latitude,
-        'longitude' : river.longitude
-    }
-    
-    #call the external apis
-    river_list = [river_dict]
-
-    river_data = get_usgs_inst(river_dict['usgs_id'], river_list)[0]
-
-    #handle favorites
-    # user_id = session.get('user_id', False)
-
-    # if(user_id):
-    #     fav = crud.get_fav(user_id, river_data['river_id'])
-    # else:
-    #     fav = False
-
-    return river_data
-
-
-@app.route('/view-favs', methods=['GET'])
-def view_favs():
-    """View favorite rivers"""
-
-    #TODO check if the user is logged in before displaying information
-
-    user_id = request.args.get('user-id')
-
-    #values used to query the API
-    usgs_id_list = []
-    river_list = []
-
-    #query the db
-    current_page = request.args.get('page', 1, type=int)
-    num_results = 10
-
-    user_favs = crud.get_favs_by_user(user_id, current_page, num_results)
-
-    #process info from the db
-    for fav in user_favs.items:
-        river_dict = {}
-        river_dict['name'] = fav.river.name
-        river_dict['usgs_id'] = fav.river.usgs_id
-        river_dict['river_id'] = fav.river.river_id
-
-        #NEED TO MOVE WEATHER CALL TO FRONT END TO SPEED UP REQUEST
-        # weather = get_weather_api(fav.river)
-        # river_dict.update(weather)
-
-        river_list.append(river_dict)
-        usgs_id_list.append(fav.river.usgs_id)
-
-    #query the API
-    usgs_ids = ",".join(usgs_id_list)
-    rivers = get_usgs_inst(usgs_ids, river_list)
-
-    #cfs values to pass into the template
-    cfs_list = []
-
-    for river in rivers:
-        cfs = river.get('cfs', 0)
-        cfs_list.append(cfs)
-
-    cfs_values = ",".join(cfs_list)
-
-    #pagination for template
-    #TODO turn into a list
-    next_page = False
-    prev_page = False
-
-    if user_favs.has_next:
-        next_page = user_favs.next_num
-    if user_favs.has_prev:
-        prev_page = user_favs.prev_num
-
-    return render_template('favorites.html', rivers=rivers, usgs_ids=usgs_ids, cfs_values=cfs_values, 
-                            prev_page=prev_page, next_page=next_page, user_id=user_id)
-
-
-# ===========================================================================
 # FORMS
 # ===========================================================================
 
@@ -232,7 +130,7 @@ def login():
     password = request.json.get('password', 0)
 
     verified_user = crud.verify_user(email, password)
-  
+
     if not verified_user:
         # returns 401 if user does not exist
         #######TODO Return something more user friendly#########
@@ -247,24 +145,16 @@ def login():
         token = jwt.encode({
             'public_id': verified_user.user_id,
             'exp' : dt.utcfromtimestamp(dt.timestamp())
-        }, app.config['SECRET_KEY'])
-  
-        return make_response(jsonify({'token' : token}), 201)
-    # returns 403 if password is wrong
+        }, app.config['SECRET_KEY'], algorithm="HS256")
 
+        fav_rivers = crud.get_favs_by_user(verified_user.user_id)
 
-#######I THINK LOGOUT WILL HAPPEN ON THE FRONT END NOW#######
-@app.route('/logout', methods=["POST"])
-def user_logout():
-    """Log the user out"""
+        favorites = []
 
-    #TODO only redirect user if they're on the favorites page
+        for fav in fav_rivers:
+            favorites.append(fav.river.usgs_id)
 
-    session.pop('user_id')
-    
-    flash('You have been logged out!')
-
-    return redirect('/')
+        return make_response(jsonify({'token' : token, 'favorites' : favorites}), 201)
 
 
 @app.route('/fav-river/<usgs_id>', methods=["POST"])
@@ -306,10 +196,11 @@ def unfav_river(usgs_id):
 # ===========================================================================
 
 @app.route('/test')
-def test():
+@token_required
+def test(user_id):
     """just testing react"""
 
-    return {"message" : "Hello World"}
+    return {"message" : user_id}
 
 
 @app.route('/locate-rivers.json') 
@@ -329,6 +220,35 @@ def locate_rivers():
         locations[river.name] = {'usgs_id': river.usgs_id, 'latitude': river.latitude, 'longitude': river.longitude}
 
     return jsonify(locations)
+
+
+@app.route('/view-favs.json')
+@token_required
+def view_favs(user_id):
+    """View favorite rivers"""
+
+    #query the db
+    current_page = request.args.get('page', 1, type=int)
+    num_results = 10
+
+    user_favs = crud.get_favs_by_user_pag(user_id, current_page, num_results)
+
+    usgs_ids = []
+
+    for fav in user_favs.items:
+        usgs_ids.append(fav.river.usgs_id)
+
+    #pagination for template
+    #TODO turn into a list
+    next_page = False
+    prev_page = False
+
+    if user_favs.has_next:
+        next_page = user_favs.next_num
+    if user_favs.has_prev:
+        prev_page = user_favs.prev_num
+
+    return {"usgsIds" : usgs_ids, "nextPage" : next_page, "prevPage" : prev_page}
 
 
 @app.route('/weather.json')
