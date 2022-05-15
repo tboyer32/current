@@ -24,8 +24,9 @@ def token_required(f):
         token = None
 
         # jwt is passed in the request header
-        if 'token' in request.headers:
-            token = request.headers['token']
+        print(request.headers)
+        if 'Authorization' in request.headers:
+            token = request.headers['Authorization']
 
         # return 401 if token is not passed
         if not token:
@@ -34,7 +35,7 @@ def token_required(f):
         try:
             # decoding the payload to fetch the stored details
             data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-            user_id = data['public_id']
+            user_id = data['user_id']
 
         except:
             return ({
@@ -143,7 +144,7 @@ def login():
         # generates the JWT Token
         dt = datetime.now() + timedelta(days=60)
         token = jwt.encode({
-            'public_id': verified_user.user_id,
+            'user_id': verified_user.user_id,
             'exp' : dt.utcfromtimestamp(dt.timestamp())
         }, app.config['SECRET_KEY'], algorithm="HS256")
 
@@ -222,13 +223,13 @@ def locate_rivers():
     return jsonify(locations)
 
 
-@app.route('/view-favs.json')
+@app.route('/view-favs.json', methods=['POST'])
 @token_required
 def view_favs(user_id):
     """View favorite rivers"""
 
     #query the db
-    current_page = request.args.get('page', 1, type=int)
+    current_page = request.json.get('page', 1)
     num_results = 10
 
     user_favs = crud.get_favs_by_user_pag(user_id, current_page, num_results)

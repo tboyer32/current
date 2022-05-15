@@ -1,11 +1,13 @@
 import React, { useContext, useDeferredValue, useEffect } from 'react';
 import * as d3 from "d3";
 import USGSDataContext from './USGSDataContext';
-import RiverDataContext from './RiverDataContext';
+import Weather from './Weather';
+import RiverChart from './RiverChart';
 
-const RiverDataProvider = (props) => {
+const River = (props) => {
     const usgsDataProps = React.useContext(USGSDataContext);
-    const usgsId = props.usgsId;
+    const pageType = props.values.pageType;
+    const usgsId = props.values.usgsId;
     const d3Data = usgsDataProps.d3Data;
     const timeSeries = usgsDataProps.timeSeries;
 
@@ -54,13 +56,21 @@ const RiverDataProvider = (props) => {
         'topBound': seasonalTopBound * 1.25
     }
     
-    return (
-        <>
-        <RiverDataContext.Provider value={river}>  
-            {props.children}
-        </RiverDataContext.Provider>
-        </>
-    )
+    //TODO: if detail render chart. If fav don't render chart
+    if(pageType === 'detail'){
+        return (
+            <>
+                <Weather river={river} />
+                <RiverChart river={river} />
+            </>
+        )
+    }else if(pageType === 'favorite') {
+        return (
+            <>
+                <Weather river={river} />
+            </>
+        )
+    }
 }
 
-export default RiverDataProvider;
+export default River;

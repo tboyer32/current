@@ -5,7 +5,7 @@ import RiverChart from '../components/RiverChart';
 
 // import * as d3 from "d3";
 import USGSDataProvider from '../components/USGSDataProvider';
-import RiverDataProvider from '../components/RiverDataProvider';
+import River from '../components/River';
 
 
 //TODO: Need db river_id to manage favorites
@@ -17,14 +17,19 @@ export default function Detail(props) {
   //only doing this on the detail page
   const usgsId = searchParams.get('id');
 
+  const values = {
+    'usgsId' : usgsId,
+    'pageType' : 'detail'
+  }
+
   return (
     <main>
       <h3>River Detail View</h3>
       <USGSDataProvider usgsIds={[usgsId]}>
-        <RiverDataProvider usgsId={usgsId} >
+        <River values={values} >
           <Weather />
           <RiverChart />
-        </RiverDataProvider>
+        </River>
       </USGSDataProvider>
     </main>
   );

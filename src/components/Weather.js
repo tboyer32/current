@@ -1,8 +1,8 @@
 import React from "react";
-import RiverDataContext from './RiverDataContext';
 
 const Weather = (props) => {
-    const riverProps = React.useContext(RiverDataContext);
+
+    const [riverProps, setRiverProps] = React.useState(props.river)
 
     const [weatherData, setWeatherData] = React.useState(null);
 
@@ -13,12 +13,12 @@ const Weather = (props) => {
         .then(responseData => {
             setWeatherData(responseData);
         })
-    }, []);
+    }, [riverProps]);
 
     if(weatherData){
         return (
             <>
-                <p>{weatherData.weather_desc}</p>
+                <p>Weather: {weatherData.weather_desc}</p>
             </>
         )
     }

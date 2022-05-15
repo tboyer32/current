@@ -1,24 +1,16 @@
 import React from "react";
 import * as d3 from "d3";
-import RiverDataContext from "./RiverDataContext";
 
 const RiverChart = (props) => {
     //D3 chart
     const svgRef = React.useRef(null);
 
-    //****** needs cfs value, riverHist ***********
-    const [riverProps, setRiverProps] = React.useState(
-      React.useContext(RiverDataContext) || false
-    );
-
-    if(riverProps){
-      console.log(riverProps);
-    }
+    const [riverProps, setRiverProps] = React.useState(props.river)
+    console.log(riverProps)
 
     //will need to do a check here for a key to handle the favorites page
     const histValues = riverProps['histValues'];
     const cfsValue = riverProps['cfs'];
-
 
     let topBound = histValues.topBound;
     if (histValues.topBound < cfsValue){
@@ -73,7 +65,7 @@ const RiverChart = (props) => {
         .text(currentFlow)
         .attr('x', barWidth / 2) // center horizontally in bar
         .attr('y', height - barHeight + 20); // just below top
-    }, [riverProps]);
+    }, []);
 
   return (
     <>
