@@ -1,9 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import AuthContext from "../components/AuthContext";
 import Field from '../components/Field';
 
 export default function CreateAccount() {
-  const {onLogin} = React.useContext(AuthContext);
+  const navigate = useNavigate();
+  const {onLogin, token} = React.useContext(AuthContext);
+
+  React.useEffect(() => {
+    if(token){
+      const home = '/home/'
+      navigate(home);
+    }
+  }, [token])
 
   const handleSubmit = e => {
     e.preventDefault();

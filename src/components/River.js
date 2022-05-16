@@ -5,14 +5,14 @@ import AuthContext from "./AuthContext";
 import Weather from './Weather';
 import RiverChart from './RiverChart';
 import FavButton from './FavButton';
+import {useLocation} from 'react-router-dom'
 
 const River = (props) => {
-    console.log(props)
-
+    const location = useLocation();
 
     const {token} = React.useContext(AuthContext);
     const usgsDataProps = React.useContext(USGSDataContext);
-    const pageType = props.values.pageType;
+    const pageType = location.pathname;
     const usgsId = props.values.usgsId;
     const d3Data = usgsDataProps.d3Data;
     const timeSeries = usgsDataProps.timeSeries;
@@ -65,7 +65,7 @@ const River = (props) => {
     
     const url = `/river-detail/?id=${usgsId}`
     //TODO: if detail render chart. If fav don't render chart
-    if(pageType === 'detail'){
+    if(pageType === '/river-detail/'){
         return (
             <>
                 <h3>{river['name']}</h3>
@@ -75,7 +75,7 @@ const River = (props) => {
                 <FavButton river={river} />
             </>
         )
-    }else if(pageType === 'favorite') {
+    }else if(pageType === '/favorites') {
         return (
             <> 
                 <h3><a href={url}>{river['name']}</a></h3>

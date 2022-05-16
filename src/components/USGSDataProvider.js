@@ -12,9 +12,9 @@ const USGSDataProvider = (props) => {
 
     let usgsIdString = null;
     
-    if(props.usgsIds.length === 1){
+    if(props.usgsIds && props.usgsIds.length === 1){
         usgsIdString = props.usgsIds[0];
-    } else {
+    } else if(props.usgsIds) {
         usgsIdString = props.usgsIds.toString();
     }
 

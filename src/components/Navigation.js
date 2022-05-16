@@ -1,15 +1,17 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import AuthContext from '../components/AuthContext';
 
 const Navigation = () => {
-    return (
-      <nav>
-        <Link to="/home">Home</Link>
-        <Link to="/favorites">Favorites</Link>
-        <Link to="/detail">River Detail</Link>
-        <Link to="/create-account">Create Account</Link>
-      </nav>
-    );
-  };
+  const {token} = React.useContext(AuthContext);
+
+  return (
+    <nav>
+      <Link to="/home">Home</Link>
+      <Link to="/favorites">Favorites</Link>
+      {!token && <Link to="/create-account">Create Account</Link>}
+    </nav>
+  );
+};
 
 export default Navigation;

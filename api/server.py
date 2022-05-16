@@ -30,7 +30,7 @@ def token_required(f):
 
         # return 401 if token is not passed
         if not token:
-            return ({'message' : 'Token is missing !!'}), 401
+            return ({'message' : 'Token is missing !!'})
   
         try:
             # decoding the payload to fetch the stored details
@@ -40,7 +40,7 @@ def token_required(f):
         except:
             return ({
                 'message' : 'Token is invalid !!'
-            }), 401
+            })
 
         # returns the current logged in users contex to the routes
         return  f(user_id, *args, **kwargs)
@@ -135,11 +135,8 @@ def login():
     if not verified_user:
         # returns 401 if user does not exist
         #######TODO Return something more user friendly#########
-        return make_response(
-            'Could not verify',
-            403,
-            {'WWW-Authenticate' : 'Wrong Username or Password!"'}
-        )
+        return {'message' : 'Wrong Username or Password!"'}
+        
     else:
         # generates the JWT Token
         dt = datetime.now() + timedelta(days=60)
