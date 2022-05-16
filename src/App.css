@@ -37,6 +37,10 @@
   }
 }
 
+#riverGraph {
+  background: #eee;
+}
+
 .map-container {
   height: 400px;
 }

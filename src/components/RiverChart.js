@@ -68,7 +68,7 @@ const RiverChart = (props) => {
 
   return (
     <>
-      <svg ref={svgRef}></svg>
+      <svg ref={svgRef} id="riverGraph" ></svg>
     </>
   )
 
