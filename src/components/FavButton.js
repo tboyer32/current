@@ -5,16 +5,19 @@ const FavButton = (props) => {
     const {token} = React.useContext(AuthContext);
 
     const [userFavorites, setUserFavorites] = React.useState(
-        localStorage.getItem('userFavorites') || null
+        localStorage.getItem('userFavorites') || []
     );
     
     const usgsId = props.river.usgsId;
+    let favArray = [];
+    let riverIndex = null;
 
-    const favArray = userFavorites.split(',');
-    const riverIndex = favArray.indexOf(usgsId);   
+    if(userFavorites.length){
+        favArray = userFavorites.split(',');
+        riverIndex = favArray.indexOf(usgsId);   
+    }
 
     const unFav = () => {
-        console.log(userFavorites);
 
         favArray.splice(riverIndex, 1);
         setUserFavorites(favArray.toString());
