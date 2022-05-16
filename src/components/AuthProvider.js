@@ -6,7 +6,9 @@ const AuthProvider = ({ children }) => {
       localStorage.getItem('user_id') || false
     );
 
-    const [favList, setFavorites] = React.useState(null);
+    const [userFavorites, setUserFavorites] = React.useState(
+      localStorage.getItem('userFavorites') || null
+    );
   
     const handleLogin = (data) => {
       fetch('/login', {
@@ -17,9 +19,10 @@ const AuthProvider = ({ children }) => {
       .then(res => res.json())
       .then(resultData => {
         localStorage.setItem('user_id', resultData.token);
-        setToken(localStorage.getItem('user_id'));
-        setFavorites(resultData.favorites);
+        localStorage.setItem('userFavorites', resultData.favorites);
 
+        setToken(localStorage.getItem('user_id'));
+        setUserFavorites(resultData.favorites);
         //need to set a fav river state
         //when a user logs in add a list of rivers that are already faved.
         //add to the list when they fav rivers
@@ -31,10 +34,10 @@ const AuthProvider = ({ children }) => {
       localStorage.removeItem('user_id')
       setToken(null);
     };
-  
+
     const value = {
       token,
-      favList,
+      userFavorites,
       onLogin: handleLogin,
       onLogout: handleLogout,
     };

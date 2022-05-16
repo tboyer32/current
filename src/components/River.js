@@ -1,10 +1,16 @@
 import React, { useContext, useDeferredValue, useEffect } from 'react';
 import * as d3 from "d3";
 import USGSDataContext from './USGSDataContext';
+import AuthContext from "./AuthContext";
 import Weather from './Weather';
 import RiverChart from './RiverChart';
+import FavButton from './FavButton';
 
 const River = (props) => {
+    console.log(props)
+
+
+    const {token} = React.useContext(AuthContext);
     const usgsDataProps = React.useContext(USGSDataContext);
     const pageType = props.values.pageType;
     const usgsId = props.values.usgsId;
@@ -15,6 +21,7 @@ const River = (props) => {
 
     for(let elem in timeSeries) {
         if(timeSeries[elem]['sourceInfo']['siteCode'][0]['value'] === usgsId){
+            river['usgsId'] = usgsId;
             river['name'] = timeSeries[elem]['sourceInfo']['siteName'];
             river['lon'] = timeSeries[elem]['sourceInfo']['geoLocation']['geogLocation']['longitude'];
             river['lat'] = timeSeries[elem]['sourceInfo']['geoLocation']['geogLocation']['latitude'];
@@ -57,7 +64,6 @@ const River = (props) => {
     }
     
     const url = `/river-detail/?id=${usgsId}`
-
     //TODO: if detail render chart. If fav don't render chart
     if(pageType === 'detail'){
         return (
@@ -66,6 +72,7 @@ const River = (props) => {
                 <p>CFS: {river['cfs']}</p>
                 <Weather river={river} />
                 <RiverChart river={river} />
+                <FavButton river={river} />
             </>
         )
     }else if(pageType === 'favorite') {

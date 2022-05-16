@@ -6,7 +6,6 @@ const RiverChart = (props) => {
     const svgRef = React.useRef(null);
 
     const [riverProps, setRiverProps] = React.useState(props.river)
-    console.log(riverProps)
 
     //will need to do a check here for a key to handle the favorites page
     const histValues = riverProps['histValues'];

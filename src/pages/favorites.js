@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 import AuthContext from '../components/AuthContext';
 
 // import * as d3 from "d3";
@@ -19,7 +19,6 @@ export default function Favorites() {
 
   //change this to use effect
   React.useEffect(() => {
-    setFavsToRender(false);
 
     fetch('/view-favs.json', {
       method: 'POST',
@@ -51,6 +50,7 @@ export default function Favorites() {
   }, [page]);
 
   if(token && favsToRender) {
+
     return (
       <>
         <USGSDataProvider usgsIds={usgsIds}>

@@ -106,10 +106,10 @@ def create_account():
 def register_user():
     """Register a user"""
 
-    username = request.form.get('username')
-    email = request.form.get('email')
-    phone = request.form.get('phone')
-    password = request.form.get('password')
+    username = request.json.get('username')
+    email = request.json.get('email')
+    phone = request.json.get('phone')
+    password = request.json.get('password')
 
     if (crud.get_user_by_email(email)):
         return make_response('User already exists. Please Log in.', 202)
@@ -121,7 +121,7 @@ def register_user():
         user_id = user.user_id
         session['user_id'] = user_id
 
-        return make_response('Successfully registered.', 201)
+        return {'message' : 'Account Creation Successful!'}
 
 
 @app.route('/login', methods =['POST'])
@@ -158,38 +158,40 @@ def login():
         return make_response(jsonify({'token' : token, 'favorites' : favorites}), 201)
 
 
-@app.route('/fav-river/<usgs_id>', methods=["POST"])
-def fav_river(usgs_id):
+@app.route('/fav-river', methods=["POST"])
+@token_required
+def fav_river(user_id):
     """Add a river to favorites"""
 
-    user_id = session.get('user_id', False)
-    river_id = request.form.get('river_id')
+    usgs_id = request.json.get('usgsId', 0)
+
+    river = crud.get_river_by_usgs_id(usgs_id)
+    river_id = river.river_id
     
     fav = crud.create_fav(user_id, river_id)
 
     db.session.add(fav)
     db.session.commit()
 
-    flash(f"River saved!")
-
-    return redirect(request.referrer)
+    return {'message' : 'Favorite added successfully'}
 
 
-@app.route('/unfav-river/<usgs_id>', methods=["POST"])
-def unfav_river(usgs_id):
+@app.route('/unfav-river', methods=["POST"])
+@token_required
+def unfav_river(user_id):
     """Remove a river from favorites"""
 
-    user_id = session.get('user_id', False)
-    river_id = request.form.get('river_id')
+    usgs_id = request.json.get('usgsId', 0)
+
+    river = crud.get_river_by_usgs_id(usgs_id)
+    river_id = river.river_id
     
     fav = crud.get_fav(user_id, river_id)
 
     db.session.delete(fav)
     db.session.commit()
 
-    flash(f"River unsaved!")
-
-    return redirect(request.referrer)
+    return {'message' : 'Favorite removed successfully'}
 
 
 # ===========================================================================
