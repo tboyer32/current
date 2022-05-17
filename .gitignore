@@ -1,9 +1,32 @@
-env
-__pycache__
-secrets.sh
-*.pyc
+# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
+
+# dependencies
+/node_modules
+/.pnp
+.pnp.js
+
+# testing
+/coverage
+
+# production
+/build
+
+# misc
 .DS_Store
-data
-test_data
-static/test-waves.html
-node_modules
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+#api
+/api/secrets.sh
+/api/data
+/api/env
+/api/__pycache__
+
+
+src/pages/home.js
