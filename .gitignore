@@ -6,3 +6,4 @@ secrets.sh
 data
 test_data
 static/test-waves.html
+node_modules
