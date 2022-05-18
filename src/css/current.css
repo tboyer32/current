@@ -1,3 +1,174 @@
+:root {
+
+    --text-color-main: #253D62;
+	--text-color-darkbg: #fff;
+	--text-color-soft: #75859E;
+    --text-color-light: #5CA5B6;
+
+    --text-color-accent: #00C2FF; /* link hover */
+	
+	--background-color: white;			
+	--background-color-softer: #EAF5FA;
+
+}
+
+ /* =========================================================================== */
+ /* Mapbox */
+ /* =========================================================================== */
+
 .map-container {
     height: 400px;
+}
+
+.mapboxgl-ctrl-attrib-button {
+    padding: 0;
+}
+
+
+ /* =========================================================================== */
+ /* Layout */
+ /* =========================================================================== */
+.container {
+    margin: 0 100px;
+}
+
+header {
+    height: 80px;
+    background-color: #fff;
+}
+
+header form {
+    float: right;
+    margin-top: 20px;
+}
+
+header nav {
+    height: 54px;
+    vertical-align: bottom;
+}
+
+header ul {
+    margin: 0 0 0 20px;
+    padding: 0;
+    vertical-align: text-bottom;
+}
+
+header ul li {
+    padding-left: 20px;
+}
+
+header h1, header nav, header ul li {
+    display: inline-block;
+}
+
+main {
+    background-color: var(--background-color-softer);
+}
+
+ /* =========================================================================== */
+ /* Typography */
+ /* =========================================================================== */
+
+body {
+    font-family: 'Rubik', 'Helvetica', 'Arial', sans-serif;
+    color: var(--text-color-main);
+}
+
+h1 {
+    font-family: 'Prompt', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 800;
+    font-style: italic;
+    font-size: 5rem;
+    letter-spacing: .1rem;
+    text-transform: uppercase;
+    line-height: 80px;
+    color: var(--text-color-main);
+}
+
+header a {
+    text-decoration: none;
+}
+
+nav ul li {
+    font-style: italic;
+    font-size: 1.8rem;
+}
+
+a:link, a:visited {
+    color: var(--text-color-main);
+}
+
+a:hover {
+    color: var(--text-color-accent);
+}
+
+
+ /* =========================================================================== */
+ /* D3 Chart */
+ /* =========================================================================== */
+
+#riverChart {
+    background-color: #C3F3FF;
+    border-radius: 20px;
+    padding-bottom: 25px;
+    box-shadow: 0px 2px 9px 1px rgba(0,0,0,0.1);
+}
+
+.chartContainer {
+    position: relative;
+}
+
+.chartContainer h4 {
+    font-size: 1.4rem;
+}
+
+.chartContainer p {
+    font-family: 'Prompt', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+}
+
+.currentTip, .seasonalTip, .historicalTip {
+    position: absolute;
+    width: 125px;
+    background-color: #45618B;
+    color: var(--text-color-darkbg);
+}
+
+.seasonalTip, .historicalTip {
+    left: 420px;
+}
+
+.chartContainer div::before{
+    height: 35px;
+    width: 35px;
+    background-color: inherit;
+    border: inherit;
+    /* position: absolute; */
+    /* left: -10px; */
+    /* left: calc(50% - 10px); */
+    clip-path: polygon(0% 0%, 100% 100%, 0% 100%);
+    transform: rotate(45deg);
+    border-radius: 0 0 0 0.25em;
+}
+
+
+ /* =========================================================================== */
+ /* Forms */
+ /* =========================================================================== */
+
+input {
+    width: 160px;
+    margin-right: 6px;
+}
+
+header button {
+    vertical-align: top;
+    padding: 0 24px;
+}
+
+::placeholder {
+    font-family: 'Rubik', 'Helvetica', 'Arial', sans-serif;
+    color: #75859E;
+    font-size: 1.4rem;
 }

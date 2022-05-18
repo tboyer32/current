@@ -47,13 +47,19 @@ export default function CreateAccount() {
   const passwordRef = React.useRef();
   
   return (
-    <form onSubmit={handleSubmit} >
-      <Field ref={usernameRef} label="Username:" type="text" />
-      <Field ref={emailRef} label="Email:" type="text" />
-      <Field ref={phoneRef} label="Phone:" type="text" />
-      <Field ref={passwordRef} label="Password:" type="password" />
-      <button type="submit">Create Account</button>
-    </form>
+    <>
+      <main>
+        <div className='container'>
+          <form onSubmit={handleSubmit} >
+            <Field ref={usernameRef} label="Username:" type="text" />
+            <Field ref={emailRef} label="Email:" type="text" />
+            <Field ref={phoneRef} label="Phone:" type="text" />
+            <Field ref={passwordRef} label="Password:" type="password" />
+            <button type="submit">Create Account</button>
+          </form>
+        </div>
+      </main>
+    </>
   );
 };
 

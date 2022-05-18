@@ -48,46 +48,32 @@ def token_required(f):
     return decorated
 
 
-
-
-
-
 # ===========================================================================
-# API Requests
+# External API Requests
 # ===========================================================================
 
 
 OW_API_KEY = os.environ['OPEN_WEATHER_KEY']
-MB_API_KEY = os.environ['MAPBOX_KEY']
 
 
-def get_usgs_inst(usgs_ids, river_list):
-    """query the usgs instantaneous value API"""
+@app.route('/weather.json')
+def get_weather():
 
-    url = 'https://waterservices.usgs.gov/nwis/iv/?format=json'
-    payload = {'sites' : usgs_ids, 'parameterCD' : '00060'}
+    lat = request.args.get('lat')
+    lon = request.args.get('lon')
+
+    url = 'https://api.openweathermap.org/data/2.5/weather'
+    payload = {'lat': lat, 'lon': lon, 'appid': OW_API_KEY}
 
     response = requests.get(url, params=payload)
-    river_data = response.json()
+    weather_data = response.json()
 
-    #process response from API
-    cfs_list = []
+    weather = {
+        'condition_id' : weather_data['weather'][0]['id'],
+        'weather_desc' : weather_data['weather'][0]['description']
+    }
 
-    timeSeries = river_data['value']['timeSeries']
-
-    for param in timeSeries:
-        cfs_dict = {
-            'usgs_id': param['sourceInfo']['siteCode'][0]['value'],
-            'cfs': param['values'][0]['value'][0]['value']
-        }
-        cfs_list.append(cfs_dict)
-
-    for river in river_list:
-        for cfs in cfs_list:
-            if river['usgs_id'] == cfs['usgs_id']:
-                river.update(cfs)
-
-    return river_list
+    return jsonify(weather)
 
 
 # ===========================================================================
@@ -195,13 +181,6 @@ def unfav_river(user_id):
 # JSON RESPONSES
 # ===========================================================================
 
-@app.route('/test')
-@token_required
-def test(user_id):
-    """just testing react"""
-
-    return {"message" : user_id}
-
 
 @app.route('/locate-rivers.json') 
 def locate_rivers():
@@ -249,26 +228,6 @@ def view_favs(user_id):
         prev_page = user_favs.prev_num
 
     return {"usgsIds" : usgs_ids, "nextPage" : next_page, "prevPage" : prev_page}
-
-
-@app.route('/weather.json')
-def get_weather():
-
-    lat = request.args.get('lat')
-    lon = request.args.get('lon')
-
-    url = 'https://api.openweathermap.org/data/2.5/weather'
-    payload = {'lat': lat, 'lon': lon, 'appid': OW_API_KEY}
-
-    response = requests.get(url, params=payload)
-    weather_data = response.json()
-
-    weather = {
-        'condition_id' : weather_data['weather'][0]['id'],
-        'weather_desc' : weather_data['weather'][0]['description']
-    }
-
-    return jsonify(weather)
 
 
 if __name__ == '__main__':

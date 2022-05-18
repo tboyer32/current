@@ -28,9 +28,9 @@ const LoginOutForm = (props) => {
     else{
       return (
         <form onSubmit={handleSubmit} >
-          <Field ref={emailRef} label="Email:" type="text" />
-          <Field ref={passwordRef} label="Password:" type="password" />
-          <button type="submit">Login</button>
+          <Field ref={emailRef} label="Email" type="text" />
+          <Field ref={passwordRef} label="Password" type="password" />
+          <button type="submit" className="button-primary">Login</button>
         </form>
       );
     }

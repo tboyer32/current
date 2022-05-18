@@ -7,9 +7,10 @@ const Navigation = () => {
 
   return (
     <nav>
-      <Link to="/home">Home</Link>
-      <Link to="/favorites">Favorites</Link>
-      {!token && <Link to="/create-account">Create Account</Link>}
+      <ul>
+        <li><Link to="/favorites">Favorites</Link></li>
+      {!token && <li><Link to="/create-account">Create Account</Link></li>}
+      </ul>
     </nav>
   );
 };

@@ -53,22 +53,30 @@ export default function Favorites() {
   if(token && favsToRender) {
 
     return (
-      <>
-        <USGSDataProvider usgsIds={usgsIds}>
-          {favsToRender}
-        </USGSDataProvider>
-        {adjPages.nextPage && <a href="#" onClick={() => setPage(page+1)}>nextPage</a>}
-        {adjPages.prevPage && <a href="#" onClick={() => setPage(page-1)}>Previous Page</a>}
-      </>
+      <main>
+        <div className='container'>
+          <USGSDataProvider usgsIds={usgsIds}>
+            {favsToRender}
+          </USGSDataProvider>
+          {adjPages.nextPage && <a href="#" onClick={() => setPage(page+1)}>nextPage</a>}
+          {adjPages.prevPage && <a href="#" onClick={() => setPage(page-1)}>Previous Page</a>}
+        </div>
+      </main>
     );
   } else if (token) {
     return (
-      <p>No favorites yet!</p>
+      <main>
+        <div className='container'>
+          <p>No favorites yet!</p>
+        </div>
+      </main>
     )
   } else {
     return (
       <main>
-        <p>Log in to see favorites</p>
+        <div className='container'>
+          <p>Log in to see favorites</p>
+        </div>
       </main>
     )
   }

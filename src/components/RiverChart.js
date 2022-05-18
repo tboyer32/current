@@ -16,7 +16,7 @@ const RiverChart = (props) => {
       topBound = cfsValue * 1.1; //add 10% to the top to give a little margin
     }
 
-    const height = 300;
+    const height = 450;
     const width = 400;
     const currentFlow = cfsValue; 
     const barHeight = height * (currentFlow / topBound);
@@ -29,6 +29,15 @@ const RiverChart = (props) => {
       const svgEl = d3.select(svgRef.current).attr('width', width).attr('height', height);
       // Append a group element to the svg and add a class of "bar".
       const group = svgEl.append('g').attr('class', 'bar');
+        
+      //cute little wave
+      group
+        .append("svg:image")
+        .attr("xlink:href", "/images/wave.png")
+        .attr("width", 350)
+        .attr('x', 25)
+        .attr('y', height-barHeight-20)
+        .attr("height", 20);
 
       // Append a rect element to the group and set its properties.
       // The background color of an SVG element is set using the "fill" property.
@@ -38,38 +47,61 @@ const RiverChart = (props) => {
         .attr('width', barWidth)
         .attr('x', 25)
         .attr('y', height - barHeight)
-        .attr('fill', 'cornflowerblue');
+        .attr('fill', 'url(#gradient)');
 
-      group
+      group //current value
         .append('line')
-        .style("stroke", "lightgreen")
-        .style("stroke-width", 4)
+        .style("stroke", "#F14888")
+        .style("stroke-width", 3)
+        .attr('x1', 0)
+        .attr('y1', height-barHeight-10)
+        .attr('x2', width)
+        .attr('y2', height-barHeight-10);
+
+      group //seasonal mean
+        .append('line')
+        .style("stroke-dasharray", ("8, 4"))
+        .style("stroke", "white")
+        .style("stroke-width", 2)
         .attr('x1', 0)
         .attr('y1', seasonalMeanPos)
         .attr('x2', width)
         .attr('y2', seasonalMeanPos);
 
-      group
+      group //historical mean
         .append('line')
-        .style("stroke", "orange")
-        .style("stroke-width", 4)
+        .style("stroke-dasharray", ("8, 4"))
+        .style("stroke", "white")
+        .style("stroke-width", 2)
         .attr('x1', 0)
         .attr('y1', histMeanPos)
         .attr('x2', width)
         .attr('y2', histMeanPos);
+      
+      const grad = group.append('linearGradient')
+        .attr('id', 'gradient')
+        .attr('x1', 0)
+        .attr('x2', 0)
+        .attr('y1', 0)
+        .attr('y2', 1);
 
-      // Append a text element to the group and set its properties.
-      group
-        .append('text')
-        .text(currentFlow)
-        .attr('x', barWidth / 2) // center horizontally in bar
-        .attr('y', height - barHeight + 20); // just below top
+      grad.append('stop')
+        .attr('offset', '0%')
+        .attr('stop-color', '#1BD9FF');
+
+      grad.append('stop')
+        .attr('offset', '100%')
+        .attr('stop-color', '#16B3FF');
+
     }, []);
 
   return (
-    <>
-      <svg ref={svgRef} id="riverGraph" ></svg>
-    </>
+    <div className="chartContainer">
+      <div className="currentTip" style={{top: height - barHeight}}><h4>Current Value</h4><p>{cfsValue} CFS</p></div>
+      <div className="seasonalTip" style={{top: seasonalMeanPos}}><h4>Seasonal Value</h4><p>{histValues.seasonalMedian} CFS</p></div>
+      <div className="historicalTip" style={{top: histMeanPos}}><h4>Historical Value</h4><p>{histValues.totalMedian} CFS</p></div>
+      <svg ref={svgRef} id="riverChart" ></svg>
+    </div>
   )
 
 }
