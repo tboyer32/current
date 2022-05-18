@@ -28,7 +28,11 @@
  /* =========================================================================== */
  /* Layout */
  /* =========================================================================== */
-.container {
+ html, body, body > div { 
+     height: 100%;
+}
+
+ .container {
     margin: 0 100px;
 }
 
@@ -63,6 +67,15 @@ header h1, header nav, header ul li {
 
 main {
     background-color: var(--background-color-softer);
+}
+
+body > footer {
+    position: sticky;
+    top: 100vh;
+}
+
+footer {
+    background-color: #45618B;
 }
 
  /* =========================================================================== */
