@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
  
-mapboxgl.accessToken = ""
+mapboxgl.accessToken = "pk..Cli_pZ5QcWNpbVSKG_0NiQ"
 
 export default function Home() {
   
@@ -95,9 +95,8 @@ export default function Home() {
     <>
       <main>
         <div className='container'>
-          <h3>Home View</h3>
-          <p>This is the home page</p>
-          <div style={{width: 400}} ref={mapContainer} className="map-container" />
+          <p>Choose a river to see current conditions</p>
+          <div ref={mapContainer} className="map-container" />
         </div>
       </main>
     </>
