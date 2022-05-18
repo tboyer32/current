@@ -2,7 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import 'mapbox-gl/dist/mapbox-gl.css';
 import mapboxgl from '!mapbox-gl'; // eslint-disable-line import/no-webpack-loader-syntax
  
-mapboxgl.accessToken = "pk..Cli_pZ5QcWNpbVSKG_0NiQ"
+mapboxgl.accessToken = ""
 
 export default function Home() {
   
