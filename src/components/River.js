@@ -80,11 +80,14 @@ const River = (props) => {
         )
     }else if(pageType === '/favorites') {
         return (
-            <> 
+            <div>
                 <h3><a href={url}>{river['name']}</a></h3>
-                <p>CFS: {river['cfs']}</p>
+                <p>
+                    Current Level<br/>
+                    <span>CFS: {river['cfs']}</span>
+                </p>
                 <Weather river={river} />
-            </>
+            </div>
         )
     }
 }

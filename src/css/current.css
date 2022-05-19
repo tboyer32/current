@@ -157,6 +157,55 @@ button.unfav, button.unfav:hover, button.fav:hover {
 
 
  /* =========================================================================== */
+ /* Favorites */
+ /* =========================================================================== */
+
+.grid-container.halves {
+    padding-bottom: 50px;
+}
+
+.grid-container > div {
+    text-align: left;
+    background-color: #fff;
+    padding: 35px;
+    position: relative;
+    border-radius: 20px;
+    box-shadow: 0px 2px 9px 1px rgba(0,0,0,0.1);
+}
+
+.grid-container h3 {
+    font-size: 2.5rem;
+    line-height: 2.7rem;
+    margin-bottom: 12px;
+}
+
+.grid-container a:link {
+    text-decoration: none;
+}
+
+.grid-container p {
+    margin: 0;
+    line-height: 1.9rem;
+}
+
+.grid-container span {
+    font-family: 'Prompt', 'Helvetica', 'Arial', sans-serif;
+    font-weight: 600;
+}
+
+.grid-container .weather {
+    position: absolute;
+    bottom: 24px;
+    right: 24px;
+}
+
+.page {
+    text-align: left;
+}
+
+
+
+ /* =========================================================================== */
  /* Weather */
  /* =========================================================================== */
 
@@ -197,6 +246,10 @@ h1 {
     text-transform: uppercase;
     line-height: 80px;
     color: var(--text-color-main);
+}
+
+.account h4 {
+    margin-bottom: 30px;
 }
 
 header a {
@@ -343,4 +396,10 @@ header button {
     font-family: 'Rubik', 'Helvetica', 'Arial', sans-serif;
     color: #75859E;
     font-size: 1.4rem;
+}
+
+.account input {
+    width: 300px;
+    display: block;
+    margin-bottom: 20px;
 }

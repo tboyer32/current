@@ -49,13 +49,14 @@ export default function CreateAccount() {
   return (
     <>
       <main>
-        <div className='container'>
+        <div className='container account'>
+          <h4>Create an Account</h4>
           <form onSubmit={handleSubmit} >
             <Field ref={usernameRef} label="Username:" type="text" />
             <Field ref={emailRef} label="Email:" type="text" />
             <Field ref={phoneRef} label="Phone:" type="text" />
             <Field ref={passwordRef} label="Password:" type="password" />
-            <button type="submit">Create Account</button>
+            <button type="submit" className='button-primary'>Create Account</button>
           </form>
         </div>
       </main>

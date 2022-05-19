@@ -54,12 +54,12 @@ export default function Favorites() {
 
     return (
       <main>
-        <div className='container'>
+        <div className='container grid-container halves'>
           <USGSDataProvider usgsIds={usgsIds}>
             {favsToRender}
           </USGSDataProvider>
-          {adjPages.nextPage && <a href="#" onClick={() => setPage(page+1)}>nextPage</a>}
-          {adjPages.prevPage && <a href="#" onClick={() => setPage(page-1)}>Previous Page</a>}
+          {adjPages.nextPage && <a href="#" className={'page'} onClick={() => setPage(page+1)}>Next Page -&gt;</a>}
+          {adjPages.prevPage && <a href="#" className={'page'} onClick={() => setPage(page-1)}>&lt;- Previous Page</a>}
         </div>
       </main>
     );
