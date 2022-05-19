@@ -25,14 +25,12 @@ export default function Detail(props) {
   return (
     <>
       <main className="detail">
-        <div className='container'>
-          <USGSDataProvider usgsIds={[usgsId]}>
-            <River values={values} >
-              <Weather />
-              <RiverChart />
-            </River>
-          </USGSDataProvider>
-        </div>
+        <USGSDataProvider usgsIds={[usgsId]}>
+          <River values={values} >
+            <Weather />
+            <RiverChart />
+          </River>
+        </USGSDataProvider>
       </main>
     </>
   );

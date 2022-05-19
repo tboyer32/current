@@ -16,6 +16,8 @@ const RiverChart = (props) => {
       topBound = cfsValue * 1.1; //add 10% to the top to give a little margin
     }
 
+    console.log(topBound);
+
     const height = 450;
     const width = 400;
     const currentFlow = cfsValue; 
@@ -64,9 +66,9 @@ const RiverChart = (props) => {
         .style("stroke", "white")
         .style("stroke-width", 2)
         .attr('x1', 0)
-        .attr('y1', seasonalMeanPos)
+        .attr('y1', height-seasonalMeanPos)
         .attr('x2', width)
-        .attr('y2', seasonalMeanPos);
+        .attr('y2', height-seasonalMeanPos);
 
       group //historical mean
         .append('line')
@@ -74,9 +76,9 @@ const RiverChart = (props) => {
         .style("stroke", "white")
         .style("stroke-width", 2)
         .attr('x1', 0)
-        .attr('y1', histMeanPos)
+        .attr('y1', height-histMeanPos)
         .attr('x2', width)
-        .attr('y2', histMeanPos);
+        .attr('y2', height-histMeanPos);
       
       const grad = group.append('linearGradient')
         .attr('id', 'gradient')
@@ -96,11 +98,13 @@ const RiverChart = (props) => {
     }, []);
 
   return (
-    <div className="chartContainer">
-      <div className="currentTip" style={{top: height - barHeight}}><h4>Current Value</h4><p>{cfsValue} CFS</p></div>
-      <div className="seasonalTip" style={{top: seasonalMeanPos}}><h4>Seasonal Value</h4><p>{histValues.seasonalMedian} CFS</p></div>
-      <div className="historicalTip" style={{top: histMeanPos}}><h4>Historical Value</h4><p>{histValues.totalMedian} CFS</p></div>
-      <svg ref={svgRef} id="riverChart" ></svg>
+    <div className="container">
+      <div className="chartContainer">
+        <div className="currentTip" style={{top: height - barHeight-9}}><h4>Current Value</h4><p>{cfsValue} CFS</p></div>
+        <div className="seasonalTip" style={{top: height-seasonalMeanPos-24}}><h4>Seasonal Value</h4><p>{histValues.seasonalMedian} CFS</p></div>
+        <div className="historicalTip" style={{top: height-histMeanPos-24}}><h4>Historical Value</h4><p>{histValues.totalMedian} CFS</p></div>
+        <svg ref={svgRef} id="riverChart" ></svg>
+      </div>
     </div>
   )
 

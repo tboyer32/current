@@ -68,11 +68,14 @@ const River = (props) => {
     if(pageType === '/river-detail/'){
         return (
             <>
-                <h3>{river['name']}</h3>
-                <p>CFS: {river['cfs']}</p>
-                <Weather river={river} />
-                <RiverChart river={river} />
-                <FavButton river={river} />
+                <div className='container'>
+                    <h3>{river['name']}</h3>
+                    <FavButton river={river} />
+                    <Weather river={river} />
+                </div>
+                <div className='detailBody'>
+                    <RiverChart river={river} />
+                </div>
             </>
         )
     }else if(pageType === '/favorites') {
