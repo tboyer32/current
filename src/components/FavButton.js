@@ -61,11 +61,11 @@ const FavButton = (props) => {
     
     if(token){
         return (
-            userFavorites.includes(props.river.usgsId) === true ? <button onClick={unFav}>unfav</button> : <button onClick={fav}>fav</button>
+            userFavorites.includes(props.river.usgsId) === true ? <button className='unfav' onClick={unFav}>Remove From Favorites</button> : <button className='fav' onClick={fav}>Add to Favorites</button>
         )
     }else{
         return (
-            <p>Log in to favorite this river</p>
+            <p className='mustLogin'>Log in to favorite this river</p>
         )
     }
 }

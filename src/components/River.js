@@ -69,9 +69,9 @@ const River = (props) => {
         return (
             <>
                 <div className='container'>
+                    <Weather river={river} />
                     <h3>{river['name']}</h3>
                     <FavButton river={river} />
-                    <Weather river={river} />
                 </div>
                 <div className='detailBody'>
                     <RiverChart river={river} />

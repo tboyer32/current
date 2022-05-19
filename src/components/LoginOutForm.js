@@ -21,7 +21,7 @@ const LoginOutForm = (props) => {
     if(token){
       return (
         <form onSubmit={onLogout} >
-          <button type="submit">Log Out</button>
+          <button className="button-primary" type="submit">Log Out</button>
         </form>
       )
     }

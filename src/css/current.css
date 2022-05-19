@@ -82,12 +82,6 @@ main {
     padding-top: 36px;
 }
 
-.detailBody {
-    background-color: #fff;
-    width: 100%;
-    padding: 50px 0;
-}
-
 /* need to adjust height on this and on body > div to stick footer */
 footer { 
     position: absolute;
@@ -110,6 +104,79 @@ footer nav img {
 footer aside {
     width: 500px;
 }
+
+ /* =========================================================================== */
+ /* River Detail */
+ /* =========================================================================== */
+
+.detailBody {
+    background-color: #fff;
+    width: 100%;
+    padding: 50px 0;
+}
+
+.detail .container {
+    padding-bottom: 24px;
+}
+
+p.mustLogin:before {
+    content: ' ';
+    display: inline-block;
+    vertical-align: middle;
+    width: 30px;
+    height: 26px;
+    margin-right: 9px;
+    background-image: url("/public/images/favheart.png");
+    background-repeat: no-repeat;
+    background-position: 0 0;
+    background-size: 30px;
+}
+
+p.mustLogin:before {
+    opacity: 0.3;
+}
+
+button.fav, button.unfav {
+    border: none;
+    padding: 0;
+    color: var(--text-color-main);
+    font-family: 'Prompt', 'Helvetica', 'Arial', sans-serif;
+    font-size: 1.5rem;
+    font-style: italic;
+    background-image: url("/public/images/favheart.png");
+    background-size: 30px;
+    background-repeat: no-repeat;
+    height: 26px;
+    line-height: 26px;
+    padding-left: 36px;
+}
+
+button.unfav, button.unfav:hover, button.fav:hover {
+    background-position: top -27px left 0;
+}
+
+
+ /* =========================================================================== */
+ /* Weather */
+ /* =========================================================================== */
+
+.weather {
+    float: right;
+    background-image: url("/public/images/weather.png");
+    background-size: 54px;
+    background-repeat: no-repeat;
+    width: 56px;
+    height: 56px;
+    background-position: top 0 left 0;
+}
+
+.storm {background-position: top -330px left 0;}
+.lightRain {background-position: top -185px left 0;}
+.rain {background-position: top -262px left 0;}
+.snow {background-position: top -407px left 0;}
+.clear {background-position: top 0 left 0;}
+.partCloud {background-position: top -76px left 0;}
+.clouds {background-position: top -128px left 0;}
 
 
  /* =========================================================================== */
@@ -147,6 +214,13 @@ a:link, a:visited {
 
 a:hover {
     color: var(--text-color-accent);
+}
+
+.button-primary {
+    font-family: 'Prompt', 'Helvetica', 'Arial', sans-serif;
+    font-size: 1.4rem;
+    font-style: italic;
+    color: var(--text-color-darkbg);
 }
 
 footer nav ul li {

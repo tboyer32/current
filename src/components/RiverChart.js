@@ -16,8 +16,6 @@ const RiverChart = (props) => {
       topBound = cfsValue * 1.1; //add 10% to the top to give a little margin
     }
 
-    console.log(topBound);
-
     const height = 450;
     const width = 400;
     const currentFlow = cfsValue; 
