@@ -21,14 +21,18 @@
 .map-container {
     width: 100%;
     height: 400px;
+    margin: 40px 0;
     border-radius: 20px;
     box-shadow: 0px 2px 9px 1px rgba(0,0,0,0.1);
+}
+
+.map-container a:link {
+    outline : none;
 }
 
 .mapboxgl-ctrl-attrib-button {
     padding: 0;
 }
-
 
  /* =========================================================================== */
  /* Layout */
@@ -71,7 +75,7 @@ header ul {
 }
 
 header ul li {
-    padding-left: 20px;
+    padding-right: 20px;
 }
 
 header h1, header nav, header ul li {
@@ -104,6 +108,38 @@ footer nav img {
 footer aside {
     width: 500px;
 }
+
+
+ /* =========================================================================== */
+ /* Home */
+ /* =========================================================================== */
+
+.intro {
+    margin: 70px 0 0;
+    background-color: #32bcf9;
+    background-image: url("/public/images/bluekayaker.jpg");
+    background-size: 450px;
+    height: 300px;
+    background-repeat: no-repeat;
+    background-position: top -180px left 80px;
+    color: var(--text-color-darkbg);
+    padding: 40px 0 50px 500px;
+    box-sizing: border-box;
+}
+
+.intro h3 {
+    font-size: 4.3rem;
+    font-family: 'Rubik';
+    font-weight: 800;
+    font-style: italic;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.intro p {
+    font-size: 1.8rem;
+}
+
 
  /* =========================================================================== */
  /* River Detail */
@@ -162,6 +198,7 @@ button.unfav, button.unfav:hover, button.fav:hover {
 
 .grid-container.halves {
     padding-bottom: 50px;
+    max-width: 100%;
 }
 
 .grid-container > div {
@@ -340,7 +377,7 @@ footer aside .hb {
 
 .currentTip, .seasonalTip, .historicalTip {
     position: absolute;
-    width: 125px;
+    width: 114px;
     color: var(--text-color-darkbg);
     background-image: url("/public/images/favspritesheet.png");
     background-size: 150px;
@@ -403,3 +440,77 @@ header button {
     display: block;
     margin-bottom: 20px;
 }
+
+
+ /* =========================================================================== */
+ /* Media Queries */
+ /* =========================================================================== */
+
+@media (max-width: 1150px) {
+    header {
+        height: auto;
+    }
+    header form {
+        float: none;
+        margin-top: 0;
+        margin-bottom: 20px;
+    }
+    header nav {
+        margin-top: 20px;
+        float: right;
+    }
+}
+
+/* Larger than phablet */
+@media (max-width: 700px) {
+    header h1 {
+        font-size: 3rem;
+        line-height: 3rem;
+        margin-top: 20px;
+        display: block;
+    }
+    .container {
+        margin: 0 40px;
+    }
+    .detailBody .container {
+        margin: 0;
+    }
+    .seasonalTip, .historicalTip {
+        left: 20px;
+    }
+    header nav {
+        float: none;
+        margin: 0;
+    }
+    header nav ul {
+        margin: 0;
+    }
+    header input {
+        display: block;
+        margin-bottom: 10px;
+    }
+    body > div { /*undo footer pinned to bottom*/
+        padding: 0
+    }
+    .intro {
+        height: auto;
+        padding: 20px;
+        margin: 70px 0 0;
+        background-image: none;
+    }
+    footer {
+        height: auto;
+        margin-top: 70px;
+        position: inherit;
+        box-sizing: content-box;
+        height: auto;
+        width: auto;
+        padding: 20px 40px;
+    }
+    footer aside {
+        display: none;
+    }
+}
+
+/* Larger than tablet */
+@media (min-width: 1200px) {}

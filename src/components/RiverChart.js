@@ -99,8 +99,8 @@ const RiverChart = (props) => {
     <div className="container">
       <div className="chartContainer">
         <div className="currentTip" style={{top: height - barHeight-9}}><h4>Current Value</h4><p>{cfsValue} CFS</p></div>
-        <div className="seasonalTip" style={{top: height-seasonalMeanPos-24}}><h4>Seasonal Value</h4><p>{histValues.seasonalMedian} CFS</p></div>
-        <div className="historicalTip" style={{top: height-histMeanPos-24}}><h4>Historical Value</h4><p>{histValues.totalMedian} CFS</p></div>
+        <div className="seasonalTip" style={{top: height-seasonalMeanPos-24}}><h4>Seasonal Average</h4><p>{histValues.seasonalMedian} CFS</p></div>
+        <div className="historicalTip" style={{top: height-histMeanPos-24}}><h4>Historical Average</h4><p>{histValues.totalMedian} CFS</p></div>
         <svg ref={svgRef} id="riverChart" ></svg>
       </div>
     </div>

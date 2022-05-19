@@ -95,10 +95,16 @@ export default function Home() {
     <>
       <main>
         <div className='container'>
-          <p>Choose a river to see current conditions</p>
           <div ref={mapContainer} className="map-container" />
         </div>
       </main>
+      <section className='intro'>
+            <h3>Have an adventure!</h3>
+            <p>
+              Current makes it easier than ever to find new places to kayak, canoe, and raft.<br /> 
+              With Current you can see water levels and weather conditions on waterways near you. <br /> 
+              You can also save your favorite rivers to check conditions at a glance.</p>
+          </section>
     </>
   );
 };
