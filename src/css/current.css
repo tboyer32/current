@@ -88,6 +88,8 @@ main {
 
 /* need to adjust height on this and on body > div to stick footer */
 footer { 
+    display: flex;
+    justify-content: space-between;
     position: absolute;
     bottom: 0;
     box-sizing: border-box;
@@ -95,8 +97,7 @@ footer {
     height: 165px;
     width: 100%;
     background-image: linear-gradient(var(--background-grad-light), var(--background-grad-dark));
-    display: flex;
-    justify-content: space-between;
+    border-top: solid 1px #fff;
 }
 
 footer nav img {
@@ -382,7 +383,22 @@ footer aside .hb {
     background-image: url("/public/images/favspritesheet.png");
     background-size: 150px;
     background-repeat: no-repeat;
+    opacity: 0;
+    animation: fadeIn ease-in 100ms;
+    animation-delay: 1000ms;
+    animation-iteration-count: 1;
+    animation-fill-mode: forwards;
 }
+
+@keyframes fadeIn {
+    0% {
+        opacity: 0;
+    }
+    100% {
+        opacity: 1;
+    }
+}
+
 
 .seasonalTip, .historicalTip {
     left: 420px;
@@ -490,7 +506,7 @@ header button {
         margin-bottom: 10px;
     }
     body > div { /*undo footer pinned to bottom*/
-        padding: 0
+        padding: 0;
     }
     .intro {
         height: auto;

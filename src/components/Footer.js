@@ -23,7 +23,7 @@ const Footer = () => {
                 It bubbles up in pools and eddies to remind you who you are.<br />
                 <span className="author">~Lynn Culbreath Noel</span>
             </p>
-            <p className="hb">Made at Hackbright. Katherine cohort 2022</p>
+            <p className="hb">Made at Hackbright. Katherine cohort 2022 &#128155;</p>
             </aside>
         </footer>
     )

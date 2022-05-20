@@ -101,7 +101,7 @@ export default function Home() {
       <section className='intro'>
             <h3>Have an adventure!</h3>
             <p>
-              Current makes it easier than ever to find new places to kayak, canoe, and raft.<br /> 
+              Current makes it easy to find new places to kayak, canoe, and raft.<br /> 
               With Current you can see water levels and weather conditions on waterways near you. <br /> 
               You can also save your favorite rivers to check conditions at a glance.</p>
           </section>

@@ -25,9 +25,11 @@ const Weather = (props) => {
                 setWeatherCondition('lightRain');
             } else if (condId >= 500 && condId < 600) {
                 setWeatherCondition('rain');
-            } else if (condId >= 600 && condId < 800) {
+            } else if (condId >= 600 && condId < 700) {
                 setWeatherCondition('snow');
-            } else if (condId === 800) {
+            } else if (condId >= 701 && condId <= 781){
+                setWeatherCondition('clouds');
+            }  else if (condId === 800) {
                 setWeatherCondition('clear');
             } else if (condId === 801 || condId === 802){
                 setWeatherCondition('partCloud');
