@@ -167,9 +167,6 @@ p.mustLogin:before {
     background-repeat: no-repeat;
     background-position: 0 0;
     background-size: 30px;
-}
-
-p.mustLogin:before {
     opacity: 0.3;
 }
 
@@ -187,7 +184,6 @@ button.fav, button.unfav {
     line-height: 26px;
     padding-left: 36px;
 }
-
 button.unfav, button.unfav:hover, button.fav:hover {
     background-position: top -27px left 0;
 }
@@ -231,6 +227,21 @@ button.unfav, button.unfav:hover, button.fav:hover {
     font-weight: 600;
 }
 
+.grid-container .high, .grid-container .mid, .grid-container .low {
+    display: inline-block;
+    font-size: 2rem;
+}
+.grid-container .high {
+    color: #F14888;
+}
+.grid-container .mid {
+    color: #08C215;
+    transform: rotate(90deg);
+}
+.grid-container .low {
+    color: #0E3B80;
+    transform: rotate(180deg);
+}
 .grid-container .weather {
     position: absolute;
     bottom: 24px;
@@ -242,19 +253,23 @@ button.unfav, button.unfav:hover, button.fav:hover {
 }
 
 
-
  /* =========================================================================== */
  /* Weather */
  /* =========================================================================== */
 
 .weather {
     float: right;
-    background-image: url("/public/images/weather.png");
-    background-size: 54px;
+    background-image: url("/public/images/simpleloading.gif");
+    background-size: 40px;
     background-repeat: no-repeat;
     width: 56px;
     height: 56px;
     background-position: top 0 left 0;
+}
+
+.storm, .lightRain, .rain, .snow, .clear, .partCloud, .clouds {
+    background-image: url("/public/images/weather.png");
+    background-size: 54px;
 }
 
 .storm {background-position: top -330px left 0;}
@@ -399,7 +414,6 @@ footer aside .hb {
     }
 }
 
-
 .seasonalTip, .historicalTip {
     left: 420px;
     width: 150px;
@@ -409,12 +423,19 @@ footer aside .hb {
 }
 
 .currentTip {
-    background-position: top 0px left 0px;
-    background-position: top 0px left 0px;
+    background-position: top -66px left 0;
     width: 110px;
     height: 23px;
     padding: 20px;
     right: 130px;
+}
+
+.high.currentTip {
+    background-position: top 0px left 0px;
+}
+
+.low.currentTip {
+    background-position: top -131px left 0;
 }
 
 .chartContainer div::before{

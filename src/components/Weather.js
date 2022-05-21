@@ -47,6 +47,12 @@ const Weather = (props) => {
                 <div className={"weather " + weatherCondition}> </div>
             </>
         )
+    }else{
+        return (
+            <>
+                <div className="weather"> </div>
+            </>
+        )
     }
 
 }

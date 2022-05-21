@@ -18,11 +18,24 @@ const RiverChart = (props) => {
 
     const height = 450;
     const width = 400;
-    const currentFlow = cfsValue; 
-    const barHeight = height * (currentFlow / topBound);
+    const barHeight = height * (cfsValue / topBound);
     const barWidth = 350;
     const histMeanPos = height * (histValues.totalMedian / topBound);
     const seasonalMeanPos = height * (histValues.seasonalMedian / topBound);
+    
+    const highValue = histValues.totalMedian + histValues.totalMedian * 0.2;
+    const lowValue = histValues.totalMedian - histValues.totalMedian * 0.2;
+
+    let levelClass = 'mid';
+    let currentColor = '#08C215'
+
+    if(cfsValue > highValue){
+      levelClass = 'high';
+      currentColor = '#F14888';
+    } else if (cfsValue < lowValue) {
+      levelClass = 'low';
+      currentColor = '#0E3B80';
+    }
 
     React.useEffect(() => {
       // Find the DOM element with an id of "chart" and set its width and height.
@@ -54,7 +67,7 @@ const RiverChart = (props) => {
 
       group //current value
         .append('line')
-        .style("stroke", "#F14888")
+        .style("stroke", currentColor)
         .style("stroke-width", 3)
         .attr('id', 'currentLine')
         .attr('x1', 0)
@@ -110,7 +123,7 @@ const RiverChart = (props) => {
   return (
     <div className="container">
       <div className="chartContainer">
-        <div className="currentTip" style={{top: height - barHeight-9}}><h4>Current Value</h4><p>{cfsValue} CFS</p></div>
+        <div className={levelClass + " currentTip"} style={{top: height - barHeight-9}}><h4>Current Value</h4><p>{cfsValue} CFS</p></div>
         <div className="seasonalTip" style={{top: height-seasonalMeanPos-24}}><h4>Seasonal Average</h4><p>{histValues.seasonalMedian} CFS</p></div>
         <div className="historicalTip" style={{top: height-histMeanPos-24}}><h4>Historical Average</h4><p>{histValues.totalMedian} CFS</p></div>
         <svg ref={svgRef} id="riverChart" ></svg>

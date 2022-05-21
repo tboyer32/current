@@ -57,6 +57,17 @@ const River = (props) => {
     //get the total historical median - includes all available dates
     const totalMedian = d3.median(river['riverHist'], d => d.mean_va);
 
+    const highValue = totalMedian + totalMedian * 0.2;
+    const lowValue = totalMedian - totalMedian * 0.2;
+    
+    let levelClass = 'mid';
+
+    if(river['cfs'] > highValue){
+      levelClass = 'high';
+    } else if (river['cfs'] < lowValue) {
+      levelClass = 'low';
+    }
+
     river['histValues'] = {
         'seasonalMedian' : seasonalMedian,
         'totalMedian': totalMedian,
@@ -83,6 +94,9 @@ const River = (props) => {
             <div>
                 <h3><a href={url}>{river['name']}</a></h3>
                 <p>
+                    <span className={levelClass}>
+                        &#9650;
+                    </span>
                     Current Level<br/>
                     <span>CFS: {river['cfs']}</span>
                 </p>
